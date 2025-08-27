@@ -7,6 +7,7 @@ import 'package:navia/core/services/stt_service.dart';
 import 'package:navia/core/services/voice_id_service.dart';
 import 'package:navia/core/utils/secure_storage_helper.dart';
 import 'core/services/background_service_manager.dart';
+import 'core/services/shake_detector_service.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
 import 'features/auth/data/datasources/auth_local_datasource.dart';
 import 'features/auth/data/datasources/auth_remote_datasource.dart';
@@ -17,6 +18,7 @@ import 'features/auth/domain/usecases/signup_usecase.dart';
 import 'features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'features/auth/domain/usecases/upload_voice_profile_usecase.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/main/presentation/cubit/navigation_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -35,6 +37,10 @@ Future<void> init({required String accessKey}) async {
     authRepository: sl(),
     uploadVoiceProfileUsecase: sl(),
   ));
+
+  //Nav Presentation
+  sl.registerFactory(() => NavigationCubit());
+
 
   // Domain layer
   sl.registerLazySingleton(() => VerifyOtpUsecase(repository: sl()));
@@ -70,4 +76,5 @@ Future<void> init({required String accessKey}) async {
   sl.registerLazySingleton(() => STTService());
   sl.registerLazySingleton(() => VoiceIdService());
   sl.registerLazySingleton(() => SecureStorageHelper());
+  sl.registerLazySingleton(() => ShakeDetectorService());
 }

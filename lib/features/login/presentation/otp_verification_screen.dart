@@ -8,8 +8,9 @@ import 'package:navia/features/auth/presentation/widgets/speech_input_button.dar
 import 'package:navia/features/auth/presentation/widgets/otp_text_field.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_autofill/sms_autofill.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import '../../auth/presentation/screens/main_screen.dart';
+import '../../main/presentation/screen/main_screen.dart';
 import '../../../../core/utils/permissions_helper.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
@@ -37,8 +38,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
       await SmsAutoFill().listenForCode;
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('الرجاء السماح بقراءة الرسائل لتفعيل الملء التلقائي.'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.smsPermissionMessage),
         ),
       );
     }
@@ -68,6 +69,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
     final textTheme = Theme.of(context).textTheme;
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -83,16 +85,15 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-            } else if (state is AuthSpeechResult) {
+            } else if (state is AuthSpeechComplete) {
               if (state.recognizedText.isNotEmpty) {
-                String cleanedResult =
-                    state.recognizedText.replaceAll(' ', '').trim();
+                final String digitsOnly = state.recognizedText.replaceAll(RegExp(r'\D'), '');
                 setState(() {
-                  _otpController.text = cleanedResult;
+                  _otpController.text = digitsOnly;
                 });
                 SemanticsService.announce(
-                  'تم إدخال الرمز: ${_otpController.text}',
-                  TextDirection.rtl,
+                  localizations.codeEntered(digitsOnly),
+                  Directionality.of(context),
                 );
               }
             }
@@ -103,19 +104,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Semantics(
-                  label:
-                      'صفحة التحقق من الرمز السري، أدخل رمز التحقق عن طريق الكلام أو الكتابة.',
+                  label: localizations.otpScreenSemantics,
                   child: const SizedBox.shrink(),
                 ),
                 Text(
-                  'تحقق من الرمز السري',
+                  localizations.otpVerificationTitle,
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 50),
                 Text(
-                  'لقد أرسلنا رمز التحقق إلى رقم هاتفك.',
+                  localizations.otpMessage,
                   style: textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),
@@ -124,7 +124,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
                 const SizedBox(height: 20),
                 OtpTextField(controller: _otpController),
                 const SizedBox(height: 20),
-                CustomButton(text: 'تحقق', onPressed: _onVerifyPressed),
+                CustomButton(text: localizations.verify, onPressed: _onVerifyPressed),
               ],
             ),
           ),

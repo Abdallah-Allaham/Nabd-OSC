@@ -9,7 +9,6 @@ class GetAppHashWidget extends StatefulWidget {
 }
 
 class _GetAppHashWidgetState extends State<GetAppHashWidget> {
-  // متغير لتخزين الـ Hash
   String _appSignature = '';
 
   @override
@@ -18,17 +17,13 @@ class _GetAppHashWidgetState extends State<GetAppHashWidget> {
     _getAppSignature();
   }
 
-  // دالة للحصول على الـ Hash
   void _getAppSignature() async {
     try {
       final signature = await SmsAutoFill().getAppSignature;
       setState(() {
         _appSignature = signature;
       });
-      // اطبع الـ Hash في الـ Console
       print('Firebase App Signature Hash: $signature');
-      // يمكنك أيضاً استخدام print('Hash: $_appSignature');
-      // أو استخدام أي طريقة أخرى لإظهار الـ Hash للمطور
     } catch (e) {
       print('Failed to get app signature: $e');
     }
@@ -50,7 +45,6 @@ class _GetAppHashWidgetState extends State<GetAppHashWidget> {
             child: const Text('استخراج الـ Hash'),
           ),
           const SizedBox(height: 20),
-          // عرض الـ Hash على الشاشة أيضاً لسهولة النسخ
           Text(
             'Hash التطبيق: $_appSignature',
             style: const TextStyle(

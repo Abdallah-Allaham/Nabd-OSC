@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import '../../../../core/constants/app_constants.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../auth/presentation/widgets/custom_button.dart';
@@ -60,6 +62,7 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
     final textTheme = Theme.of(context).textTheme;
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -72,24 +75,24 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 MaterialPageRoute(
                   builder:
                       (context) => OtpVerificationScreen(
-                        phoneNumber: _phoneController.text,
-                      ),
+                    phoneNumber: _phoneController.text,
+                  ),
                 ),
               );
             } else if (state is AuthError) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-            } else if (state is AuthSpeechResult) {
+            } else if (state is AuthSpeechComplete) {
               if (state.recognizedText.isNotEmpty) {
-                String cleanedResult =
-                    state.recognizedText.replaceAll(' ', '').trim();
+                final String digitsOnly = state.recognizedText.replaceAll(RegExp(r'\D'), '');
+                final String limited = digitsOnly.length > 10 ? digitsOnly.substring(0, 10) : digitsOnly;
                 setState(() {
-                  _phoneController.text = cleanedResult;
+                  _phoneController.text = limited;
                 });
                 SemanticsService.announce(
-                  'تم إدخال الرقم: ${_phoneController.text}',
-                  TextDirection.rtl,
+                  localizations.phoneNumberEntered(limited),
+                  Directionality.of(context),
                 );
               }
             }
@@ -101,12 +104,11 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
               children: [
                 const Spacer(),
                 Semantics(
-                  label:
-                      'صفحة تسجيل الدخول، أدخل رقم هاتفك عن طريق الكلام أو الكتابة.',
+                  label: localizations.loginPageSemantics,
                   child: const SizedBox.shrink(),
                 ),
                 Text(
-                  'تسجيل الدخول',
+                  localizations.loginTitle,
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -117,20 +119,22 @@ class _PhoneNumberScreenState extends State<PhoneNumberScreen> {
                 TextField(
                   controller: _phoneController,
                   style: textTheme.bodyLarge,
+                  maxLength: 10,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    labelText: 'أو أدخل رقم الهاتف يدويًا',
+                    labelText: localizations.enterPhoneNumberManually,
                     labelStyle: textTheme.bodyLarge,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 20),
-                CustomButton(text: 'تحقق', onPressed: _onVerifyPressed),
+                CustomButton(text: localizations.verify, onPressed: _onVerifyPressed),
                 const Spacer(),
                 CustomButton(
-                  text: 'إنشاء حساب جديد',
+                  text: localizations.createAccount,
                   onPressed: _onSignupPressed,
                   isSecondary: true,
                 ),

@@ -5,6 +5,7 @@ import 'package:navia/features/auth/presentation/widgets/custom_button.dart';
 import 'package:navia/features/signup/presentation/signup_voice_screen.dart';
 import 'package:navia/features/auth/presentation/widgets/speech_input_button.dart';
 import 'package:navia/core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../auth/presentation/cubit/auth_cubit.dart';
 
@@ -33,6 +34,7 @@ class _SignupNameScreenState extends State<SignupNameScreen> {
   @override
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -43,14 +45,14 @@ class _SignupNameScreenState extends State<SignupNameScreen> {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-            } else if (state is AuthSpeechResult) {
+            } else if (state is AuthSpeechComplete) {
               if (state.recognizedText.isNotEmpty) {
                 setState(() {
                   _nameController.text = state.recognizedText;
                 });
                 SemanticsService.announce(
-                  'تم إدخال الاسم: ${_nameController.text}',
-                  TextDirection.rtl,
+                  localizations.nameEntered(_nameController.text),
+                  Directionality.of(context),
                 );
               }
             }
@@ -61,7 +63,7 @@ class _SignupNameScreenState extends State<SignupNameScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'أدخل اسمك',
+                  localizations.enterYourName,
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -74,7 +76,7 @@ class _SignupNameScreenState extends State<SignupNameScreen> {
                   style: Theme.of(context).textTheme.bodyLarge,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    labelText: 'أو أدخل اسمك يدويًا',
+                    labelText: localizations.enterNameManually,
                     labelStyle: Theme.of(context).textTheme.bodyLarge,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -82,7 +84,7 @@ class _SignupNameScreenState extends State<SignupNameScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                CustomButton(text: 'التالي', onPressed: _onNextPressed),
+                CustomButton(text: localizations.next, onPressed: _onNextPressed),
               ],
             ),
           ),

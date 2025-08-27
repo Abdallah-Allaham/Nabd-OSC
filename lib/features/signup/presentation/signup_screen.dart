@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/features/signup/presentation/signup_otp_verification_screen.dart';
 import 'package:navia/core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
@@ -52,11 +53,17 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
+    final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(gradient: appGradient?.background),
-        child: BlocListener<AuthCubit, AuthState>(
+    return Container(
+      decoration: BoxDecoration(gradient: appGradient?.background),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: BlocListener<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthOtpSentForSignup) {
               Navigator.push(
@@ -64,24 +71,24 @@ class _SignupScreenState extends State<SignupScreen> {
                 MaterialPageRoute(
                   builder:
                       (context) => SignupOtpVerificationScreen(
-                        phoneNumber: state.phoneNumber,
-                      ),
+                    phoneNumber: state.phoneNumber,
+                  ),
                 ),
               );
             } else if (state is AuthError) {
               ScaffoldMessenger.of(
                 context,
               ).showSnackBar(SnackBar(content: Text(state.message)));
-            } else if (state is AuthSpeechResult) {
+            } else if (state is AuthSpeechComplete) {
               if (state.recognizedText.isNotEmpty) {
-                String cleanedResult =
-                    state.recognizedText.replaceAll(' ', '').trim();
+                final String digitsOnly = state.recognizedText.replaceAll(RegExp(r'\D'), '');
+                final String limited = digitsOnly.length > 10 ? digitsOnly.substring(0, 10) : digitsOnly;
                 setState(() {
-                  _phoneController.text = cleanedResult;
+                  _phoneController.text = limited;
                 });
                 SemanticsService.announce(
-                  'تم إدخال الرقم: ${_phoneController.text}',
-                  TextDirection.rtl,
+                  localizations.phoneNumberEntered(limited),
+                  Directionality.of(context),
                 );
               }
             }
@@ -92,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'إنشاء حساب جديد',
+                  localizations.createAccount,
                   style: Theme.of(
                     context,
                   ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -102,18 +109,20 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
                 TextField(
                   controller: _phoneController,
+                  maxLength: 10,
                   style: Theme.of(context).textTheme.bodyLarge,
                   keyboardType: TextInputType.phone,
                   decoration: InputDecoration(
-                    labelText: 'أو أدخل رقم الهاتف يدويًا',
+                    labelText: localizations.enterPhoneNumberManually,
                     labelStyle: Theme.of(context).textTheme.bodyLarge,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
+                  textAlign: TextAlign.left,
                 ),
                 const SizedBox(height: 20),
-                CustomButton(text: 'تسجيل', onPressed: _onSignupPressed),
+                CustomButton(text: localizations.signup, onPressed: _onSignupPressed),
               ],
             ),
           ),

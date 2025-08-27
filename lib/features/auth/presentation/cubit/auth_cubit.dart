@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import '../../../../core/services/background_service_manager.dart';
 import '../../../../core/services/stt_service.dart';
@@ -34,6 +35,7 @@ class AuthCubit extends Cubit<AuthState> {
   String? _phoneNumber;
   bool? _isLoginFlow;
   String? _userName;
+  bool _sttInitialized = false;
 
   AuthCubit({
     required this.verifyOtpUsecase,
@@ -45,15 +47,36 @@ class AuthCubit extends Cubit<AuthState> {
     required this.secureStorage,
     required this.authRepository,
     required this.uploadVoiceProfileUsecase,
-  }) : super(AuthInitial()) {
-    sttService.initialize(
-      onResult: (text) {
+  }) : super(AuthInitial());
+
+  void updateSpeechResult(String recognizedText) {
+    emit(AuthSpeechResult(recognizedText: recognizedText));
+  }
+
+  String _resolveDeviceLocale() {
+    final ui.Locale locale = ui.PlatformDispatcher.instance.locale;
+    final String languageCode = locale.languageCode;
+    final String? countryCode = locale.countryCode;
+    if (countryCode != null && countryCode.isNotEmpty) {
+      return '${languageCode}_${countryCode}';
+    }
+    return languageCode;
+  }
+
+  Future<void> _ensureSttInitialized() async {
+    if (_sttInitialized) return;
+    final String locale = _resolveDeviceLocale();
+    await sttService.initialize(
+      locale: locale,
+      onResult: (String text) {
         emit(AuthSpeechResult(recognizedText: text));
       },
-      onCompletion: (text) {
+      onCompletion: (String text) {
         emit(AuthSpeechComplete(recognizedText: text));
+        emit(AuthStoppedListeningForSpeech());
       },
     );
+    _sttInitialized = true;
   }
 
   Future<void> signInWithPhoneNumber(String phoneNumber) async {
@@ -101,7 +124,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// New function for the signup flow
   Future<void> signUpWithPhoneNumber(String phoneNumber) async {
     emit(AuthLoading());
     try {
@@ -110,7 +132,6 @@ class AuthCubit extends Cubit<AuthState> {
 
       final userExists = await checkIfUserExistsUsecase(internationalPhoneNumber);
       if (userExists) {
-        // رسالة الخطأ الصحيحة للتسجيل
         emit(const AuthError(message: 'هذا الرقم مسجل مسبقاً. الرجاء تسجيل الدخول.'));
         return;
       }
@@ -147,7 +168,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  /// Verifies the OTP code entered by the user manually
   Future<void> verifyOtp(String otp) async {
     emit(AuthLoading());
     try {
@@ -171,7 +191,7 @@ class AuthCubit extends Cubit<AuthState> {
         final userEntity = UserEntity(
           uid: currentUser.uid,
           phoneNumber: currentUser.phoneNumber ?? '',
-          name: _userName ?? 'N/A', // استخدام _userName المحفوظ هنا
+          name: _userName ?? 'N/A',
         );
         emit(AuthAuthenticated(user: userEntity));
       }
@@ -182,7 +202,6 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  // دالة جديدة لحفظ الاسم
   void setUserName(String name) {
     _userName = name;
   }
@@ -219,9 +238,8 @@ class AuthCubit extends Cubit<AuthState> {
           Uint8List.fromList(voiceProfileBytes),
         );
 
-        // هنا نقوم بدمج عملية التسجيل مع الاسم
         await signup(
-          _userName ?? 'N/A', // استخدام _userName المحفوظ
+          _userName ?? 'N/A',
           voiceProfileUrl,
         );
       } else {
@@ -270,8 +288,9 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> toggleSpeechToText() async {
-    emit(AuthListeningForSpeech());
     try {
+      await _ensureSttInitialized();
+      emit(AuthListeningForSpeech());
       await sttService.startListening();
     } catch (e) {
       await sttService.stopListening();
@@ -281,5 +300,6 @@ class AuthCubit extends Cubit<AuthState> {
 
   void stopSpeechToText() {
     sttService.stopListening();
+    emit(AuthStoppedListeningForSpeech());
   }
 }

@@ -79,12 +79,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> saveUserProfile(String uid, String phoneNumber, String name, String voiceProfileUrl) async {
     try {
-      // تم تعديل هذا الجزء لحفظ فقط البيانات المطلوبة: uid, name, و phoneNumber
       await firestore.collection('users').doc(uid).set({
         'uid': uid,
         'name': name,
         'phoneNumber': phoneNumber,
-        // voiceProfileUrl and createdAt are no longer stored here as per your request
       });
     } on FirebaseException catch (e) {
       throw ServerException('فشل حفظ بيانات المستخدم في Firestore: ${e.message}');

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:navia/features/auth/presentation/cubit/auth_cubit.dart';
-import 'package:navia/features/auth/presentation/screens/main_screen.dart';
-import 'package:navia/features/login/presentation/phone_number_screen.dart';
-import 'package:navia/core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../core/theme/app_theme.dart';
+import '../../auth/presentation/cubit/auth_cubit.dart';
+import '../../login/presentation/phone_number_screen.dart';
+import '../../main/presentation/screen/main_screen.dart';
 
 const _platform = MethodChannel('nabd/foreground');
 
@@ -47,6 +49,7 @@ class PermissionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
     final appColors = Theme.of(context).extension<AppColor>();
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -64,7 +67,7 @@ class PermissionsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'تنبيه',
+                localizations.alert,
                 textAlign: TextAlign.center,
                 style: Theme.of(
                   context,
@@ -72,7 +75,7 @@ class PermissionsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'لاستمرار عمل التطبيق في الخلفية بكفاءة، نحتاج إلى هذه الأذونات. يرجى منحنا صلاحيات تجاهل استهلاك البطارية، والظهور فوق التطبيقات الأخرى، وإمكانية الوصول.',
+                localizations.permissionsMessage,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -87,7 +90,7 @@ class PermissionsScreen extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'منح الأذونات',
+                  localizations.grantPermissions,
                   style: Theme.of(
                     context,
                   ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -97,9 +100,9 @@ class PermissionsScreen extends StatelessWidget {
               TextButton(
                 onPressed: () => _handleNavigation(context),
                 child: Text(
-                  'تجاهل',
+                  localizations.ignore,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: appColors?.textLight, // Use extension color
+                    color: appColors?.textLight,
                   ),
                 ),
               ),
