@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/features/auth/presentation/widgets/custom_button.dart';
 import 'package:navia/core/theme/app_theme.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../../login/presentation/phone_number_screen.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
@@ -28,6 +29,7 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
   Widget build(BuildContext context) {
     final appGradient = Theme.of(context).extension<AppGradient>();
     final textTheme = Theme.of(context).textTheme;
+    final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: Container(
@@ -62,14 +64,14 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'سجل بصمة صوتك',
+                  localizations.recordYourVoice,
                   style: textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'اضغط على الزر أدناه وتحدث لمدة 7 ثوانٍ لتسجيل بصمتك الصوتية.',
+                  localizations.voiceEnrollmentMessage,
                   style: textTheme.bodyMedium?.copyWith(
                     color: textTheme.bodyMedium?.color?.withOpacity(0.8),
                   ),
@@ -77,7 +79,7 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
                 ),
                 const SizedBox(height: 50),
                 CustomButton(
-                  text: 'ابدأ التسجيل',
+                  text: localizations.startRecording,
                   onPressed: _onEnrollPressed,
                 ),
                 const SizedBox(height: 20),
@@ -91,7 +93,7 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
                           const CircularProgressIndicator(),
                           const SizedBox(height: 10),
                           Text(
-                            'جاري إتمام عملية التسجيل...',
+                            localizations.completingSignup,
                             style: textTheme.bodyMedium,
                           ),
                         ],
@@ -105,7 +107,7 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
                       );
                     } else if (state is AuthError) {
                       return Text(
-                        'خطأ في التسجيل: ${state.message}',
+                        localizations.signupError(state.message),
                         style: textTheme.bodyMedium?.copyWith(
                           color: AppTheme.error,
                         ),

@@ -48,9 +48,7 @@ class _OtpTextFieldState extends State<OtpTextField> with CodeAutoFill {
         radius: const Radius.circular(8),
       ),
       currentCode: widget.controller.text,
-      onCodeChanged: (code) {
-        print("رمز الـ OTP الجديد هو: $code");
-      },
+      onCodeChanged: (code) {},
       codeLength: widget.length,
     );
   }

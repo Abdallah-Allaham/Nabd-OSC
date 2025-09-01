@@ -19,6 +19,9 @@ class STTService {
     });
 
     _speech.setRecognitionResultHandler((String text) {
+      if (!_isListening) {
+        return;
+      }
       _recognizedText = text;
       _onResultCallback?.call(text);
       print("STT recognized text: $text");
@@ -37,12 +40,13 @@ class STTService {
   bool get isListening => _isListening;
 
   Future<void> initialize({
+    required String locale,
     required void Function(String) onResult,
     required void Function(String) onCompletion,
   }) async {
     _onResultCallback = onResult;
     _onCompletionCallback = onCompletion;
-    await _speech.activate('ar_SA');
+    await _speech.activate(locale);
   }
 
   Future<void> startListening() async {

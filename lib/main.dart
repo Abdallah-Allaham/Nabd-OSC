@@ -2,9 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'core/services/background_service_manager.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
+import 'features/main/presentation/cubit/navigation_cubit.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
@@ -29,10 +32,21 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthCubit>(create: (context) => di.sl<AuthCubit>()),
+        BlocProvider<NavigationCubit>(create: (context) => di.sl<NavigationCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Nabd App',
+        localizationsDelegates:const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [
+          Locale('en'),
+          Locale('ar'),
+        ],
+        title: 'Nabd',
         theme: AppTheme.lightTheme,
         home: const SplashScreen(),
       ),
