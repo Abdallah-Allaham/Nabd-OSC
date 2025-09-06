@@ -5,7 +5,7 @@ import 'package:navia/features/auth/presentation/widgets/custom_button.dart';
 import 'package:navia/features/signup/presentation/signup_voice_screen.dart';
 import 'package:navia/features/auth/presentation/widgets/speech_input_button.dart';
 import 'package:navia/core/theme/app_theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../auth/presentation/cubit/auth_cubit.dart';
 

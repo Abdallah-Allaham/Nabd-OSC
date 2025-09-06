@@ -1,0 +1,12 @@
+type: page_extension
+page: connectivity
+intents:
+  - id: connectivity.check_wifi
+    action: check
+    target: connectivity
+    synonyms: ["check wifi","check network","wifi"]
+  - id: connectivity.connect_bluetooth
+    action: connect
+    target: connectivity
+    synonyms: ["connect bluetooth","enable bluetooth","bluetooth connect"]
+unknown_reply: "try again"

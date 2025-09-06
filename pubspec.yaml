@@ -50,6 +50,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  yaml: ^3.1.3
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +79,20 @@ flutter:
   assets:
     - assets/images/
     - .env
+    - assets/chat_compilation/
+    - assets/chat_compilation/ar/base.yaml
+    - assets/chat_compilation/ar/pages/home.yaml
+    - assets/chat_compilation/ar/pages/reader.yaml
+    - assets/chat_compilation/ar/pages/history.yaml
+    - assets/chat_compilation/ar/pages/connectivity.yaml
+    - assets/chat_compilation/ar/pages/settings.yaml
+    - assets/chat_compilation/en/base.yaml
+    - assets/chat_compilation/en/pages/home.yaml
+    - assets/chat_compilation/en/pages/reader.yaml
+    - assets/chat_compilation/en/pages/history.yaml
+    - assets/chat_compilation/en/pages/connectivity.yaml
+    - assets/chat_compilation/en/pages/settings.yaml
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

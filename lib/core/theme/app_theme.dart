@@ -71,6 +71,8 @@ class AppTheme {
   static const Color textLight = Colors.white;
   static const Color background = Color(0xFF041235);
   static const Color error = Colors.red;
+  static const Color textPrimary = Colors.white;
+  static const Color textSecondary = Colors.black87;
 
   static const LinearGradient mainGradient = LinearGradient(
     colors: [secondary, primary],

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:navia/core/services/feedback_service.dart';
 import 'package:navia/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../main/presentation/screen/main_screen.dart';
 import '../../login/presentation/phone_number_screen.dart';
 import 'permissions_screen.dart';
 import 'package:navia/core/theme/app_theme.dart';
- 
 
 const _platform = MethodChannel('nabd/foreground');
 
@@ -29,11 +29,10 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _textRightAnimation;
 
-  
-
   @override
   void initState() {
     super.initState();
+
     _textUpController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
@@ -62,10 +61,6 @@ class _SplashScreenState extends State<SplashScreen>
     ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeIn));
 
     _textUpController.forward().then((_) {
-      SemanticsService.announce(
-        AppLocalizations.of(context)!.welcomeMessage,
-        Directionality.of(context),
-      );
       checkPermissionsAndNavigate();
     });
 
@@ -73,24 +68,27 @@ class _SplashScreenState extends State<SplashScreen>
       if (status == AnimationStatus.completed) {
         final state = context.read<AuthCubit>().state;
         if (state is AuthAuthenticated) {
-          Navigator.pushReplacement(
+          FeedbackService().playSuccessTone();
+          Navigator.pushAndRemoveUntil(
             context,
             PageRouteBuilder(
-              pageBuilder: (_, __, ___) => const MainScreen(),
+              pageBuilder: (_, __, ___) => MainScreen(),
               transitionsBuilder:
                   (_, anim, __, child) =>
-                  FadeTransition(opacity: anim, child: child),
+                      FadeTransition(opacity: anim, child: child),
               transitionDuration: const Duration(milliseconds: 500),
             ),
+            (route) => false,
           );
         } else if (state is AuthUnauthenticated) {
+          FeedbackService().playFailureTone();
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
               pageBuilder: (_, __, ___) => const PhoneNumberScreen(),
               transitionsBuilder:
                   (_, anim, __, child) =>
-                  FadeTransition(opacity: anim, child: child),
+                      FadeTransition(opacity: anim, child: child),
               transitionDuration: const Duration(milliseconds: 500),
             ),
           );
@@ -99,7 +97,15 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
-  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    FeedbackService().announce(
+      AppLocalizations.of(context)!.welcomeMessage,
+      context,
+    );
+  }
 
   Future<void> checkPermissionsAndNavigate() async {
     try {
@@ -114,6 +120,8 @@ class _SplashScreenState extends State<SplashScreen>
       if (isBatteryIgnored && isOverlayEnabled && isAccessibilityEnabled) {
         context.read<AuthCubit>().checkAuthStatus();
       } else {
+        FeedbackService().playFailureTone();
+        FeedbackService().vibrate();
         _fadeController.forward().then((_) {
           Navigator.pushReplacement(
             context,
@@ -121,13 +129,15 @@ class _SplashScreenState extends State<SplashScreen>
               pageBuilder: (_, __, ___) => const PermissionsScreen(),
               transitionsBuilder:
                   (_, anim, __, child) =>
-                  FadeTransition(opacity: anim, child: child),
+                      FadeTransition(opacity: anim, child: child),
               transitionDuration: const Duration(milliseconds: 500),
             ),
           );
         });
       }
     } on PlatformException catch (e) {
+      FeedbackService().playFailureTone();
+      FeedbackService().vibrate();
       _fadeController.forward().then((_) {
         Navigator.pushReplacement(
           context,
@@ -135,7 +145,7 @@ class _SplashScreenState extends State<SplashScreen>
             pageBuilder: (_, __, ___) => const PermissionsScreen(),
             transitionsBuilder:
                 (_, anim, __, child) =>
-                FadeTransition(opacity: anim, child: child),
+                    FadeTransition(opacity: anim, child: child),
             transitionDuration: const Duration(milliseconds: 500),
           ),
         );

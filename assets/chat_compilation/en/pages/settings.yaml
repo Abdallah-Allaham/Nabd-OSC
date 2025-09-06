@@ -1,0 +1,12 @@
+type: page_extension
+page: settings
+intents:
+  - id: settings.change_language
+    action: change_language
+    target: settings
+    synonyms: ["change language","switch language","language settings"]
+  - id: settings.open_account
+    action: open_account
+    target: settings
+    synonyms: ["open account","my account","account settings"]
+unknown_reply: "try again"

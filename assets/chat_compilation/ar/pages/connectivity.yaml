@@ -1,0 +1,12 @@
+type: page_extension
+page: connectivity
+intents:
+  - id: connectivity.check_wifi
+    action: check
+    target: connectivity
+    synonyms: ["تحقق من الواي فاي","فحص الشبكة","الواي فاي"]
+  - id: connectivity.connect_bluetooth
+    action: connect
+    target: connectivity
+    synonyms: ["اتصل بالبلوتوث","تفعيل البلوتوث","وصل البلوتوث"]
+unknown_reply: "اعد الكلام"

@@ -1,0 +1,12 @@
+type: page_extension
+page: history
+intents:
+  - id: history.open_last
+    action: open
+    target: history
+    synonyms: ["open last history","last reading","recent history"]
+  - id: history.clear
+    action: clear
+    target: history
+    synonyms: ["clear history","delete history","empty history"]
+unknown_reply: "try again"

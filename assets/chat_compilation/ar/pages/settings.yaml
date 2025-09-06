@@ -1,0 +1,12 @@
+type: page_extension
+page: settings
+intents:
+  - id: settings.change_language
+    action: change_language
+    target: settings
+    synonyms: ["غيّر اللغة","بدّل اللغة","تغيير اللغة","لغة","كلام","تبديل"]
+  - id: settings.open_account
+    action: open_account
+    target: settings
+    synonyms: ["افتح الحساب","حسابي","فتح الحساب","افتح البروفايل","الملف الشخصي"]
+unknown_reply: "اعد الكلام"

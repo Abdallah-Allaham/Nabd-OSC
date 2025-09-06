@@ -1,80 +1,111 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import '../../../../core/services/shake_detector_service.dart';
+import 'package:navia/core/services/feedback_service.dart';
+import 'package:shake/shake.dart';
+
 import '../../../../core/services/stt_service.dart';
+import '../../../../core/services/shake_detector_service.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../injection_container.dart';
+import '../../../../core/voice_handlers/voice_handler_camera.dart';
+import '../../../../core/voice_handlers/voice_handler_language.dart';
+import '../../../../core/voice_handlers/voice_handler_profile.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../../connectivity/presentation/screen/connectivity_screen.dart';
+import '../../../history/presentation/screen/history_screen.dart';
+import '../../../home/presentation/screen/home_screen.dart';
+import '../../../pdfreader/presentation/screen/pdfreader_screen.dart';
+import '../../../setting/presentation/screen/setting_screen.dart';
 import '../cubit/navigation_cubit.dart';
+import '../cubit/navigation_state.dart';
+import '../voice/chat_compilation_loader.dart';
+import '../voice/voice_router.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
-
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
 class _MainScreenState extends State<MainScreen> {
   final List<Widget> screens = [
-    const HomeScreen(),
-    const PdfReaderScreen(),
-    const HistoryScreen(),
-    const ConnectivityScreen(),
-    const SettingScreen(),
+    HomeScreen(),
+    PdfReaderScreen(),
+    HistoryScreen(),
+    ConnectivityScreen(),
+    SettingScreen(),
   ];
 
-  final STTService _sttService = sl<STTService>();
-  final ShakeDetectorService _shakeDetectorService = sl<ShakeDetectorService>();
-
+  final STTService _sttService = STTService();
+  final ShakeDetectorService _shakeDetectorService = ShakeDetectorService();
   String _lastCommand = "";
   bool _isListening = false;
+
   Timer? _silenceTimer;
   DateTime? _listeningStartTime;
+  int _listeningDurationSec = 0;
   String _micStatusMsg = "";
   int? _lastAnnouncedIndex;
+
+  late VoiceRouter _voiceRouter;
+  late ChatCompilationLoader _loader;
+  bool _inited = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final locale = Localizations.localeOf(context).toString();
-      final localizations = AppLocalizations.of(context)!;
-      print("Initializing STTService with locale: $locale");
-      print("pageSettings value: ${localizations.pageSettings}");
-      print("pageHistory value: ${localizations.pageHistory}");
+    // نبدأ مستشعر الهز بمجرد دخول الشاشة.
+    _shakeDetectorService.start(
+      onShake: (event) {
+        _startListeningWithTimer();
+      },
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final lang = Localizations.localeOf(context).languageCode;
+    _loader = ChatCompilationLoader(lang);
+    _voiceRouter = VoiceRouter(_loader);
+
+    // نهيئ خدمة STT مرة واحدة فقط.
+    if (!_inited) {
       _sttService.initialize(
-        locale: locale,
-        onResult: (String text) {
-          _lastCommand = text;
-          _handleVoiceCommand(text);
+        onResult: (text) {
+          print("أمر صوتي مكتشف: $text");
+          setState(() => _lastCommand = text);
           _startSilenceTimer();
         },
-        onCompletion: (String text) {
-          _lastCommand = text;
+        onCompletion: (text) {
+          setState(() {
+            _isListening = false;
+            _lastCommand = text;
+            _listeningDurationSec = _listeningStartTime != null
+                ? DateTime.now().difference(_listeningStartTime!).inSeconds
+                : 0;
+            _micStatusMsg = "⏹️ تم إيقاف المايك بعد $_listeningDurationSec ثانية (انتهاء الجلسة)";
+          });
+          _silenceTimer?.cancel();
           _handleVoiceCommand(text);
-          _stopListeningDueToSilence();
         },
       );
-    });
-    _shakeDetectorService.start(onShake: (_) => _startListeningWithTimer());
+      _inited = true;
+    }
   }
 
   void _startListeningWithTimer() async {
-    _shakeDetectorService.stop();
     FocusScope.of(context).unfocus();
-    HapticFeedback.vibrate();
 
     print("🎤 تم تشغيل المايك للاستماع");
     setState(() {
       _isListening = true;
       _lastCommand = "";
-      _micStatusMsg = AppLocalizations.of(context)!.microphoneOn;
+      _micStatusMsg = "🎤 المايك يعمل...";
       _listeningStartTime = DateTime.now();
+      _listeningDurationSec = 0;
     });
-
     await _sttService.startListening();
     _startSilenceTimer();
   }
@@ -87,117 +118,84 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _stopListeningDueToSilence() async {
-    print("⏹️ تم إيقاف المايك بسبب الصمت.");
+    print("⏹️ تم إيقاف المايك بسبب الصمت (${_listeningDurationSec} ثانية)");
     await _sttService.stopListening();
     setState(() {
       _isListening = false;
-      _micStatusMsg = AppLocalizations.of(context)!.microphoneOffSilence;
+      _listeningDurationSec = _listeningStartTime != null
+          ? DateTime.now().difference(_listeningStartTime!).inSeconds
+          : 0;
+      _micStatusMsg = "⏹️ تم إيقاف المايك بعد $_listeningDurationSec ثانية بسبب الصمت";
     });
-    _shakeDetectorService.start(onShake: (_) => _startListeningWithTimer());
   }
 
   @override
   void dispose() {
     _silenceTimer?.cancel();
-    _shakeDetectorService.stop();
+    _shakeDetectorService.stop(); // إيقاف مستشعر الهز.
     _sttService.stopListening();
     super.dispose();
   }
 
-  void _handleVoiceCommand(String text) {
-    print("جارٍ تحليل الأمر الصوتي: $text");
-    final textLower = text.toLowerCase().trim();
-    final localizations = AppLocalizations.of(context)!;
-
-    final Map<int, List<String>> commands = {
-      0: [
-        localizations.pageHome.toLowerCase(),
-        "الرئيسية",
-        "home",
-        "هوم",
-        "الصفحة الرئيسية",
-        "الصفحه الرئيسيه",
-      ],
-      1: [
-        localizations.pagePDFReader.toLowerCase(),
-        "القارئ",
-        "reader",
-        "pdf",
-        "قراءة",
-        "بي دي اف",
-      ],
-      2: [
-        localizations.pageHistory.toLowerCase(),
-        "السجل",
-        "history",
-        "هيستوري",
-        "سجل",
-      ],
-      3: [
-        localizations.pageConnectivity.toLowerCase(),
-        "الاتصال",
-        "connectivity",
-        "كونكت",
-        "كونكتيفيتي",
-        "الاتصالات",
-      ],
-      4: [
-        localizations.pageSettings.toLowerCase(),
-        "الاعدادات",
-        "الإعدادات",
-        "settings",
-        "ستنجز",
-        "setting",
-        "اعدادات",
-        "الإعدادات ",
-        "الاعدادات ",
-      ],
-    };
-
-    print("Available commands: $commands");
-
-    final profileCommands = [
-      localizations.pageProfile.toLowerCase(),
-      "الملف الشخصي",
-      "الحساب",
-      "بروفايل",
-      "profile",
-      "account",
-      "أدخل على الحساب",
-      "افتح حسابي",
-    ];
-
-    for (final key in profileCommands) {
-      if (textLower.contains(key)) {
-        print("تطابق أمر الملف الشخصي: $key");
-        //Navigator.push(context, MaterialPageRoute(builder: (_) => const ProfileScreen()));
-        //_announcePage(localizations.profileOpened);
-        return;
+  void _handleVoiceCommand(String text) async {
+    print("[🟢] استُدعيت _handleVoiceCommand بالنص: $text");
+    final navCubit = context.read<NavigationCubit>();
+    final currentPage = _pageFileNameFromIndex(navCubit.state.index);
+    print("[🟢] الصفحة الحالية حسب NavCubit: $currentPage, index: ${navCubit.state.index}");
+    var result = await _voiceRouter.route(
+      text,
+      currentPage: currentPage,
+    );
+    print("[🟢] نتيجة VoiceRouter: $result");
+    if (result['type'] == 'base') {
+      var tabValue = result['tab'];
+      print("[🟢] نوع الأمر: base, قيمة التاب المطلوبة: $tabValue");
+      if (int.tryParse(tabValue) != null) {
+        print("[🟢] سيتم الانتقال إلى التاب index = $tabValue مع popUntil");
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        navCubit.changePage(int.parse(tabValue));
+      } else {
+        print("[🟢] tabValue ليس رقم!");
       }
-    }
-
-    for (final entry in commands.entries) {
-      for (final key in entry.value) {
-        if (textLower == key) {
-          print("تطابق الأمر: $key، الانتقال إلى الصفحة: ${entry.key}");
-          context.read<NavigationCubit>().changePage(entry.key);
-          String pageTitle = _getPageTitle(entry.key, context);
-          _announcePage(localizations.pageOpened(pageTitle));
-          return;
-        }
+    } else if (result['type'] == 'page' && result['data'] != null) {
+      final intent = result['data'];
+      final String targetPage = result['page'] ?? currentPage;
+      int targetIndex = _pageIndexFromFileName(targetPage);
+      if (navCubit.state.index != targetIndex) {
+        print("[🟢] نحتاج للانتقال للصفحة: $targetPage (index $targetIndex)");
+        navCubit.changePage(targetIndex);
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _executeIntent(context, intent, text);
+        });
+      } else {
+        _executeIntent(context, intent, text);
       }
+    } else {
+      print("[🟢] الأمر غير معروف، سيتم إعلان لم أفهم الأمر");
+      _announcePage("لم أفهم الأمر");
     }
-    print("لم يتم العثور على تطابق للأمر: $textLower");
+  }
+
+  void _executeIntent(BuildContext context, Map<String, dynamic> intent, String originalText) async {
+    if (await CameraVoiceHandler.handle(context, intent, originalText: originalText)) {
+      print("[🟢] CameraVoiceHandler نفذ الأمر!");
+      return;
+    }
+    if (await ProfileVoiceHandler.handle(context, intent, originalText: originalText)) {
+      print("[🟢] ProfileVoiceHandler نفذ الأمر!");
+      return;
+    }
+    if (await LanguageVoiceHandler.handle(context, intent, originalText: originalText)) return;
+    print("[🟢] لم يتعرف على أي Handler للintent الحالي");
+    _announcePage("لم أفهم الأمر");
   }
 
   Future<void> _announcePage(String pageName) async {
-    SemanticsService.announce(pageName, TextDirection.rtl);
+    FeedbackService().announce(pageName,context);
   }
 
   @override
   Widget build(BuildContext context) {
-    final appGradient = Theme.of(context).extension<AppGradient>();
-
     return ExcludeSemantics(
       excluding: _isListening,
       child: GestureDetector(
@@ -207,16 +205,16 @@ class _MainScreenState extends State<MainScreen> {
           }
         },
         child: Container(
-          decoration: BoxDecoration(gradient: appGradient?.background),
+          decoration: const BoxDecoration(
+            gradient: AppTheme.mainGradient,
+          ),
           child: BlocBuilder<NavigationCubit, NavigationState>(
             builder: (context, state) {
               if (_lastAnnouncedIndex != state.index) {
                 _lastAnnouncedIndex = state.index;
                 Future.delayed(const Duration(milliseconds: 200), () {
-                  String pageTitle = _getPageTitle(state.index, context);
-                  _announcePage(
-                    AppLocalizations.of(context)!.pageOpened(pageTitle),
-                  );
+                  String pageTitle = _pageTitleFromIndex(state.index, context);
+                  _announcePage(pageTitle);
                 });
               }
               return Stack(
@@ -231,17 +229,20 @@ class _MainScreenState extends State<MainScreen> {
                       color: Colors.black.withOpacity(0.01),
                     ),
                   if (_isListening)
-                    const Positioned(
+                    Positioned(
                       left: 0,
                       right: 0,
                       bottom: 100,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: const Center(child: CircularProgressIndicator()),
                     ),
                   Positioned(
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    child: _buildCustomNavBar(context, state.index),
+                    child: IgnorePointer(
+                      ignoring: _isListening,
+                      child: _buildCustomNavBar(context, state.index),
+                    ),
                   ),
                   Positioned(
                     right: 20,
@@ -251,8 +252,20 @@ class _MainScreenState extends State<MainScreen> {
                       child: FloatingActionButton(
                         heroTag: "stt_fab",
                         onPressed: _startListeningWithTimer,
-                        tooltip: "فعّل التنقل الصوتي",
                         child: const Icon(Icons.mic),
+                        tooltip: "فعّل التنقل الصوتي",
+                      ),
+                    ),
+                  ),
+                  Semantics(
+                    excludeSemantics: true,
+                    child: Visibility(
+                      visible: false,
+                      child: Center(
+                        child: Text(
+                          "الأمر الصوتي: $_lastCommand",
+                          style: const TextStyle(fontSize: 16, color: Colors.black),
+                        ),
                       ),
                     ),
                   ),
@@ -269,16 +282,16 @@ class _MainScreenState extends State<MainScreen> {
     return Container(
       height: 74,
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppTheme.textLight,
-        borderRadius: const BorderRadius.only(
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
           topLeft: Radius.circular(18),
           topRight: Radius.circular(18),
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x959DA540),
-            offset: const Offset(0, -3),
+            color: Color(0x959DA540),
+            offset: Offset(0, -3),
             blurRadius: 6,
           ),
         ],
@@ -300,19 +313,14 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Widget _navItem(
-      BuildContext context,
-      IconData icon,
-      int index,
-      int selectedIndex,
-      ) {
-    final localizations = AppLocalizations.of(context)!;
+      BuildContext context, IconData icon, int index, int selectedIndex) {
     final isSelected = index == selectedIndex;
     final labels = [
-      localizations.pageHome,
-      localizations.pagePDFReader,
-      localizations.pageHistory,
-      localizations.pageConnectivity,
-      localizations.pageSettings,
+      AppLocalizations.of(context)!.home,
+      AppLocalizations.of(context)!.pdfreader,
+      AppLocalizations.of(context)!.history,
+      AppLocalizations.of(context)!.connectivity,
+      AppLocalizations.of(context)!.setting,
     ];
     return Semantics(
       button: true,
@@ -326,7 +334,7 @@ class _MainScreenState extends State<MainScreen> {
             Icon(
               icon,
               size: 32,
-              color: isSelected ? AppTheme.accent : Colors.grey,
+              color: isSelected ? AppTheme.primary : Colors.grey,
             ),
             const SizedBox(height: 4),
           ],
@@ -336,74 +344,53 @@ class _MainScreenState extends State<MainScreen> {
   }
 }
 
-String _getPageTitle(int index, BuildContext context) {
-  final localizations = AppLocalizations.of(context)!;
+String _pageFileNameFromIndex(int index) {
   switch (index) {
     case 0:
-      return localizations.pageHome;
+      return "home";
     case 1:
-      return localizations.pagePDFReader;
+      return "reader";
     case 2:
-      return localizations.pageHistory;
+      return "history";
     case 3:
-      return localizations.pageConnectivity;
+      return "connectivity";
     case 4:
-      return localizations.pageSettings;
+      return "settings";
     default:
-      return "";
+      return "home";
   }
 }
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pageHome));
+int _pageIndexFromFileName(String page) {
+  switch (page) {
+    case "home":
+      return 0;
+    case "reader":
+      return 1;
+    case "history":
+      return 2;
+    case "connectivity":
+      return 3;
+    case "settings":
+      return 4;
+    default:
+      return 0;
   }
 }
 
-class PdfReaderScreen extends StatelessWidget {
-  const PdfReaderScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pagePDFReader));
-  }
-}
-
-class HistoryScreen extends StatelessWidget {
-  const HistoryScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pageHistory));
-  }
-}
-
-class ConnectivityScreen extends StatelessWidget {
-  const ConnectivityScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pageConnectivity));
-  }
-}
-
-class SettingScreen extends StatelessWidget {
-  const SettingScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pageSettings));
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(child: Text(AppLocalizations.of(context)!.pageProfile));
+String _pageTitleFromIndex(int index, BuildContext context) {
+  switch (index) {
+    case 0:
+      return AppLocalizations.of(context)!.pageHome;
+    case 1:
+      return AppLocalizations.of(context)!.pagePDFReader;
+    case 2:
+      return AppLocalizations.of(context)!.pageHistory;
+    case 3:
+      return AppLocalizations.of(context)!.pageConnectivity;
+    case 4:
+      return AppLocalizations.of(context)!.pageSettings;
+    default:
+      return AppLocalizations.of(context)!.pageHome;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_speech/flutter_speech.dart';
 
 class STTService {
@@ -7,6 +8,7 @@ class STTService {
   void Function(String)? _onResultCallback;
   void Function(String)? _onCompletionCallback;
 
+  // Constructor
   STTService() {
     _speech.setAvailabilityHandler((bool result) {
       print("STT Service is available: $result");
@@ -40,12 +42,17 @@ class STTService {
   bool get isListening => _isListening;
 
   Future<void> initialize({
-    required String locale,
+    // تم إزالة `required String locale`
     required void Function(String) onResult,
     required void Function(String) onCompletion,
   }) async {
     _onResultCallback = onResult;
     _onCompletionCallback = onCompletion;
+
+    // تحديد لغة الجهاز تلقائياً
+    final String systemLangCode = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    final String locale = systemLangCode == 'ar' ? 'ar_SA' : 'en_US';
+
     await _speech.activate(locale);
   }
 

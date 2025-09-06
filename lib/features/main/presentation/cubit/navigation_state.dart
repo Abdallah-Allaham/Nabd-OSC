@@ -1,10 +1,12 @@
-part of 'navigation_cubit.dart';
-
-class NavigationState extends Equatable {
+abstract class NavigationState {
   final int index;
+  const NavigationState(this.index);
+}
 
-  const NavigationState({required this.index});
+class NavigationInitial extends NavigationState {
+  NavigationInitial() : super(0);
+}
 
-  @override
-  List<Object> get props => [index];
+class NavigationChanged extends NavigationState {
+  NavigationChanged(int index) : super(index);
 }
