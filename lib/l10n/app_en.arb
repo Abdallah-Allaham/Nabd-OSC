@@ -40,5 +40,26 @@
   "completingSignup": "Completing the registration process...",
   "signupError": "Registration error: {errorMessage}",
   "loginPageSemantics": "Login page, enter your phone number by speaking or typing.",
-  "otpScreenSemantics": "OTP verification screen, enter the verification code by speaking or typing."
+  "otpScreenSemantics": "OTP verification screen, enter the verification code by speaking or typing.",
+  "home": "Home",
+  "history": "History",
+  "setting": "Settings",
+  "profile": "Profile",
+  "pdfreader": "PDF Reader",
+  "switch_language": "Language",
+  "logout": "Logout",
+  "connectivity": "Connectivity",
+  "account_info": "Account Info",
+  "name": "Name",
+  "phone": "Phone",
+  "edit": "Edit",
+  "save": "Save",
+  "cancel": "Cancel",
+  "new_value": "Enter new {field}",
+  "@new_value": {
+    "description": "Message asking user to enter new value with placeholder",
+    "placeholders": {
+      "field": {}
+    }
+  }
 }

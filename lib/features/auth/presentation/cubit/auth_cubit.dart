@@ -2,9 +2,8 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:typed_data';
-import 'dart:ui' as ui;
+import 'package:navia/core/constants/app_constants.dart';
+import 'package:navia/core/utils/secure_storage_helper.dart';
 
 import '../../../../core/services/background_service_manager.dart';
 import '../../../../core/services/stt_service.dart';
@@ -28,11 +27,10 @@ class AuthCubit extends Cubit<AuthState> {
   final UploadVoiceProfileUsecase uploadVoiceProfileUsecase;
   final STTService sttService;
   final VoiceIdService voiceIdService;
-  final FlutterSecureStorage secureStorage;
+  final SecureStorageHelper secureStorageHelper;
   final AuthRepository authRepository;
 
   String? _verificationId;
-  String? _phoneNumber;
   bool? _isLoginFlow;
   String? _userName;
   bool _sttInitialized = false;
@@ -44,7 +42,7 @@ class AuthCubit extends Cubit<AuthState> {
     required this.signupUsecase,
     required this.sttService,
     required this.voiceIdService,
-    required this.secureStorage,
+    required this.secureStorageHelper,
     required this.authRepository,
     required this.uploadVoiceProfileUsecase,
   }) : super(AuthInitial());
@@ -53,21 +51,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthSpeechResult(recognizedText: recognizedText));
   }
 
-  String _resolveDeviceLocale() {
-    final ui.Locale locale = ui.PlatformDispatcher.instance.locale;
-    final String languageCode = locale.languageCode;
-    final String? countryCode = locale.countryCode;
-    if (countryCode != null && countryCode.isNotEmpty) {
-      return '${languageCode}_${countryCode}';
-    }
-    return languageCode;
-  }
-
   Future<void> _ensureSttInitialized() async {
     if (_sttInitialized) return;
-    final String locale = _resolveDeviceLocale();
     await sttService.initialize(
-      locale: locale,
       onResult: (String text) {
         emit(AuthSpeechResult(recognizedText: text));
       },
@@ -83,12 +69,15 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final String internationalPhoneNumber = '+962${phoneNumber.substring(1)}';
-      _phoneNumber = internationalPhoneNumber;
 
-      final userExists = await checkIfUserExistsUsecase(internationalPhoneNumber);
+      final userExists = await checkIfUserExistsUsecase(
+        internationalPhoneNumber,
+      );
 
       if (!userExists) {
-        emit(const AuthError(message: 'هذا الرقم غير مسجل. الرجاء إنشاء حساب.'));
+        emit(
+          const AuthError(message: 'هذا الرقم غير مسجل. الرجاء إنشاء حساب.'),
+        );
         return;
       }
 
@@ -113,7 +102,12 @@ class AuthCubit extends Cubit<AuthState> {
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
-          emit(AuthOtpSentForLogin(phoneNumber: internationalPhoneNumber, verificationId: verificationId));
+          emit(
+            AuthOtpSentForLogin(
+              phoneNumber: internationalPhoneNumber,
+              verificationId: verificationId,
+            ),
+          );
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
@@ -128,11 +122,16 @@ class AuthCubit extends Cubit<AuthState> {
     emit(AuthLoading());
     try {
       final String internationalPhoneNumber = '+962${phoneNumber.substring(1)}';
-      _phoneNumber = internationalPhoneNumber;
 
-      final userExists = await checkIfUserExistsUsecase(internationalPhoneNumber);
+      final userExists = await checkIfUserExistsUsecase(
+        internationalPhoneNumber,
+      );
       if (userExists) {
-        emit(const AuthError(message: 'هذا الرقم مسجل مسبقاً. الرجاء تسجيل الدخول.'));
+        emit(
+          const AuthError(
+            message: 'هذا الرقم مسجل مسبقاً. الرجاء تسجيل الدخول.',
+          ),
+        );
         return;
       }
 
@@ -157,7 +156,12 @@ class AuthCubit extends Cubit<AuthState> {
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
-          emit(AuthOtpSentForSignup(phoneNumber: internationalPhoneNumber, verificationId: verificationId));
+          emit(
+            AuthOtpSentForSignup(
+              phoneNumber: internationalPhoneNumber,
+              verificationId: verificationId,
+            ),
+          );
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
@@ -181,6 +185,10 @@ class AuthCubit extends Cubit<AuthState> {
       await FirebaseAuth.instance.signInWithCredential(credential);
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null && _isLoginFlow == true) {
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.uidKey,
+          value: currentUser.uid,
+        );
         final userEntity = UserEntity(
           uid: currentUser.uid,
           phoneNumber: currentUser.phoneNumber ?? '',
@@ -188,6 +196,10 @@ class AuthCubit extends Cubit<AuthState> {
         );
         emit(AuthAuthenticatedForLogin(user: userEntity));
       } else if (currentUser != null && _isLoginFlow == false) {
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.uidKey,
+          value: currentUser.uid,
+        );
         final userEntity = UserEntity(
           uid: currentUser.uid,
           phoneNumber: currentUser.phoneNumber ?? '',
@@ -238,10 +250,7 @@ class AuthCubit extends Cubit<AuthState> {
           Uint8List.fromList(voiceProfileBytes),
         );
 
-        await signup(
-          _userName ?? 'N/A',
-          voiceProfileUrl,
-        );
+        await signup(_userName ?? 'N/A', voiceProfileUrl);
       } else {
         emit(
           const VoiceIdEnrollmentError(
@@ -260,13 +269,15 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  @override
   Future<void> checkAuthStatus() async {
     try {
       emit(AuthLoading());
-      final uid = await secureStorage.read(key: 'uid');
+      final uid = await secureStorageHelper.getPrefString(
+        key: AppConstants.uidKey,
+        defaultValue: '',
+      );
 
-      if (uid != null && uid.isNotEmpty) {
+      if (uid.isNotEmpty) {
         final user = FirebaseAuth.instance.currentUser;
         if (user != null) {
           final userEntity = UserEntity(
@@ -276,7 +287,7 @@ class AuthCubit extends Cubit<AuthState> {
           );
           emit(AuthAuthenticated(user: userEntity));
         } else {
-          await secureStorage.delete(key: 'uid');
+          await secureStorageHelper.remove(key: AppConstants.uidKey);
           emit(AuthUnauthenticated());
         }
       } else {

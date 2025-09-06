@@ -3,7 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/features/signup/presentation/signup_otp_verification_screen.dart';
 import 'package:navia/core/theme/app_theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';

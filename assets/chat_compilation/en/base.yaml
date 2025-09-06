@@ -1,0 +1,9 @@
+type: base_navigation
+outputs: ["0","1","2","3","4","try again"]
+tabs:
+  "0": ["home","main","go to home","open home"]
+  "1": ["reader","start reading"]
+  "2": ["history","records"]
+  "3": ["connectivity","link","network"]
+  "4": ["settings","preferences","options"]
+unknown_reply: "try again"

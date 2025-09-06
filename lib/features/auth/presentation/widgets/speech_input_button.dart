@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/core/utils/permissions_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+
+import '../../../../l10n/app_localizations.dart';
 import '../cubit/auth_cubit.dart';
 
 class SpeechInputButton extends StatelessWidget {

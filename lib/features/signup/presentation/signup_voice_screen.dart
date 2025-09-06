@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/features/auth/presentation/widgets/custom_button.dart';
 import 'package:navia/core/theme/app_theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
+import 'package:navia/features/main/presentation/screen/main_screen.dart';
 
-import '../../login/presentation/phone_number_screen.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
 
 class SignupVoiceScreen extends StatefulWidget {
   final String name;
 
-  const SignupVoiceScreen({
-    super.key,
-    required this.name,
-  });
+  const SignupVoiceScreen({super.key, required this.name});
 
   @override
   State<SignupVoiceScreen> createState() => _SignupVoiceScreenState();
@@ -37,23 +34,32 @@ class _SignupVoiceScreenState extends State<SignupVoiceScreen> {
         child: BlocListener<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is VoiceIdEnrollmentComplete) {
-              print('BlocListener: استقبل حالة VoiceIdEnrollmentComplete. الآن سيتم استدعاء وظيفة التسجيل الكاملة...');
-              context.read<AuthCubit>().signup(widget.name, state.voiceProfileUrl);
-            } else if (state is AuthSignupSuccess) {
-              print('BlocListener: استقبل حالة AuthSignupSuccess بنجاح! سيتم الآن الانتقال إلى شاشة تسجيل الدخول.');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+              print(
+                'BlocListener: استقبل حالة VoiceIdEnrollmentComplete. الآن سيتم استدعاء وظيفة التسجيل الكاملة...',
               );
+              context.read<AuthCubit>().signup(
+                widget.name,
+                state.voiceProfileUrl,
+              );
+            } else if (state is AuthSignupSuccess) {
+              print(
+                'BlocListener: استقبل حالة AuthSignupSuccess بنجاح! سيتم الآن الانتقال إلى شاشة تسجيل الدخول.',
+              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
               Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const PhoneNumberScreen()),
-                    (route) => false,
+                MaterialPageRoute(builder: (context) =>  MainScreen()),
+                (route) => false,
               );
             } else if (state is AuthError) {
-              print('BlocListener: استقبل حالة AuthError. حدث خطأ في التسجيل: ${state.message}');
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
+              print(
+                'BlocListener: استقبل حالة AuthError. حدث خطأ في التسجيل: ${state.message}',
               );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             } else {
               print('BlocListener: استقبل حالة أخرى: ${state.runtimeType}');
             }

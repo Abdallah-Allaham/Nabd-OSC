@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
+import '../../../core/services/feedback_service.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../login/presentation/phone_number_screen.dart';
@@ -16,11 +17,14 @@ class PermissionsScreen extends StatelessWidget {
   void _handleNavigation(BuildContext context) {
     final state = context.read<AuthCubit>().state;
     if (state is AuthAuthenticated) {
-      Navigator.pushReplacement(
+      FeedbackService().playSuccessTone();
+      Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const MainScreen()),
+        MaterialPageRoute(builder: (_) =>  MainScreen()),
+        (route) => false,
       );
     } else if (state is AuthUnauthenticated) {
+      FeedbackService().playFailureTone();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const PhoneNumberScreen()),
@@ -38,9 +42,12 @@ class PermissionsScreen extends StatelessWidget {
       await _platform.invokeMethod('requestBatteryOptimization');
       await _platform.invokeMethod('requestOverlayPermission');
       await _platform.invokeMethod('requestAccessibilityPermission');
+      FeedbackService().playSuccessTone();
 
       _handleNavigation(context);
     } on PlatformException catch (e) {
+      FeedbackService().playFailureTone();
+      FeedbackService().vibrate();
       _handleNavigation(context);
     }
   }
@@ -98,7 +105,10 @@ class PermissionsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               TextButton(
-                onPressed: () => _handleNavigation(context),
+                onPressed: () {
+                  FeedbackService().playFailureTone();
+                  _handleNavigation(context);
+                },
                 child: Text(
                   localizations.ignore,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(

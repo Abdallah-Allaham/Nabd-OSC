@@ -40,5 +40,28 @@
   "completingSignup": "جاري إتمام عملية التسجيل...",
   "signupError": "خطأ في التسجيل: {errorMessage}",
   "loginPageSemantics": "صفحة تسجيل الدخول، أدخل رقم هاتفك عن طريق الكلام أو الكتابة.",
-  "otpScreenSemantics": "صفحة التحقق من الرمز السري، أدخل رمز التحقق عن طريق الكلام أو الكتابة."
+  "otpScreenSemantics": "صفحة التحقق من الرمز السري، أدخل رمز التحقق عن طريق الكلام أو الكتابة.",
+  "home": "الرئيسية",
+  "history": "السجل",
+  "setting": "الاعدادات",
+  "profile": "الملف الشخصي",
+  "pdfreader": "Pdf قارئ",
+  "switch_language": "اللغة",
+  "logout": "تسجيل خروج",
+  "connectivity": "الاتصال",
+  "account_info": "معلومات الحساب",
+  "name": "الاسم",
+  "phone": "رقم الهاتف",
+  "edit": "تعديل",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "new_value": "أدخل {field} الجديد",
+  "@new_value": {
+    "description": "رسالة تطلب من المستخدم إدخال قيمة جديدة مع متغير",
+    "placeholders": {
+      "field": {
+        "type": "Object"
+      }
+    }
+  }
 }

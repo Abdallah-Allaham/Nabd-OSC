@@ -1,0 +1,12 @@
+type: page_extension
+page: history
+intents:
+  - id: history.open_last
+    action: open
+    target: history
+    synonyms: ["افتح آخر سجل","آخر قراءة","سجل الأخيرة"]
+  - id: history.clear
+    action: clear
+    target: history
+    synonyms: ["امسح السجل","حذف السجل","افرغ السجل"]
+unknown_reply: "اعد الكلام"

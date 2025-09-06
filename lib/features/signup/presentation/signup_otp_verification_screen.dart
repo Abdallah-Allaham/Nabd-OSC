@@ -6,7 +6,7 @@ import 'package:navia/features/auth/presentation/widgets/otp_text_field.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 import 'package:navia/core/theme/app_theme.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../auth/presentation/cubit/auth_cubit.dart';
 import '../../auth/presentation/widgets/custom_button.dart';
@@ -91,12 +91,11 @@ class _SignupOtpVerificationScreenState
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text(localizations.phoneVerified)),
               );
-              Navigator.pushAndRemoveUntil(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const SignupNameScreen(),
                 ),
-                    (route) => false,
               );
             } else if (state is AuthError) {
               ScaffoldMessenger.of(

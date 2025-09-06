@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:navia/core/services/stt_service.dart';
 import 'package:navia/core/services/voice_id_service.dart';
@@ -33,7 +32,7 @@ Future<void> init({required String accessKey}) async {
     signupUsecase: sl(),
     sttService: sl(),
     voiceIdService: sl(),
-    secureStorage: sl(),
+    secureStorageHelper: sl(),
     authRepository: sl(),
     uploadVoiceProfileUsecase: sl(),
   ));
@@ -72,7 +71,6 @@ Future<void> init({required String accessKey}) async {
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
   sl.registerLazySingleton(() => FirebaseStorage.instance);
-  sl.registerLazySingleton(() => FlutterSecureStorage());
   sl.registerLazySingleton(() => STTService());
   sl.registerLazySingleton(() => VoiceIdService());
   sl.registerLazySingleton(() => SecureStorageHelper());

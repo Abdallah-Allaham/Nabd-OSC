@@ -8,7 +8,7 @@ import 'package:navia/features/auth/presentation/widgets/speech_input_button.dar
 import 'package:navia/features/auth/presentation/widgets/otp_text_field.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sms_autofill/sms_autofill.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../../../l10n/app_localizations.dart';
 
 import '../../main/presentation/screen/main_screen.dart';
 import '../../../../core/utils/permissions_helper.dart';
@@ -77,9 +77,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen>
         child: BlocListener<AuthCubit, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticatedForLogin) {
-              Navigator.pushReplacement(
+              Navigator.pushAndRemoveUntil(
                 context,
-                MaterialPageRoute(builder: (context) => const MainScreen()),
+                MaterialPageRoute(builder: (context) => MainScreen()),
+                (route) => false,
               );
             } else if (state is AuthError) {
               ScaffoldMessenger.of(
