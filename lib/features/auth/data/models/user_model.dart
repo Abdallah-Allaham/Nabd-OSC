@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
@@ -12,6 +13,15 @@ class UserModel extends UserEntity {
       uid: json['uid'] as String,
       name: json['name'] as String,
       phoneNumber: json['phoneNumber'] as String,
+    );
+  }
+
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return UserModel(
+      uid: doc.id,
+      name: data['name'] as String? ?? 'N/A',
+      phoneNumber: data['phoneNumber'] as String? ?? '',
     );
   }
 

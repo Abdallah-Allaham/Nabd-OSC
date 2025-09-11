@@ -61,5 +61,19 @@
     "placeholders": {
       "field": {}
     }
-  }
+  },
+  "camera": "Camera",
+  "cameraOpened": "Camera is open",
+  "cameraClosed": "Camera is closed",
+  "cameraInitializing": "Initializing Camera...",
+  "cameraPermissionRequired": "Camera Permission Required",
+  "cameraPermissionMessage": "This app needs camera permission to take photos.",
+  "cameraError": "Error",
+  "photoCapturedSuccessfully": "Photo captured successfully!",
+  "failedToCapturePhoto": "Failed to capture photo",
+  "failedToInitializeCamera": "Failed to initialize camera",
+  "retake": "Retake",
+  "save": "Save",
+  "cancel": "Cancel",
+  "settings": "Settings"
 }

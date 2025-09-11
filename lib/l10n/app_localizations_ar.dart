@@ -21,7 +21,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get alert => 'تنبيه';
 
   @override
-  String get permissionsMessage => 'لاستمرار عمل التطبيق في الخلفية بكفاءة، نحتاج إلى هذه الأذونات. يرجى منحنا صلاحيات تجاهل استهلاك البطارية، والظهور فوق التطبيقات الأخرى، وإمكانية الوصول.';
+  String get permissionsMessage =>
+      'لاستمرار عمل التطبيق في الخلفية بكفاءة، نحتاج إلى هذه الأذونات. يرجى منحنا صلاحيات تجاهل استهلاك البطارية، والظهور فوق التطبيقات الأخرى، وإمكانية الوصول.';
 
   @override
   String get grantPermissions => 'منح الأذونات';
@@ -56,7 +57,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get otpMessage => 'لقد أرسلنا رمز التحقق إلى رقم هاتفك.';
 
   @override
-  String get smsPermissionMessage => 'الرجاء السماح بقراءة الرسائل لتفعيل الملء التلقائي.';
+  String get smsPermissionMessage =>
+      'الرجاء السماح بقراءة الرسائل لتفعيل الملء التلقائي.';
 
   @override
   String codeEntered(Object otpCode) {
@@ -122,7 +124,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recordYourVoice => 'سجل بصمة صوتك';
 
   @override
-  String get voiceEnrollmentMessage => 'اضغط على الزر أدناه وتحدث لمدة 7 ثوانٍ لتسجيل بصمتك الصوتية.';
+  String get voiceEnrollmentMessage =>
+      'اضغط على الزر أدناه وتحدث لمدة 7 ثوانٍ لتسجيل بصمتك الصوتية.';
 
   @override
   String get startRecording => 'ابدأ التسجيل';
@@ -136,10 +139,12 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get loginPageSemantics => 'صفحة تسجيل الدخول، أدخل رقم هاتفك عن طريق الكلام أو الكتابة.';
+  String get loginPageSemantics =>
+      'صفحة تسجيل الدخول، أدخل رقم هاتفك عن طريق الكلام أو الكتابة.';
 
   @override
-  String get otpScreenSemantics => 'صفحة التحقق من الرمز السري، أدخل رمز التحقق عن طريق الكلام أو الكتابة.';
+  String get otpScreenSemantics =>
+      'صفحة التحقق من الرمز السري، أدخل رمز التحقق عن طريق الكلام أو الكتابة.';
 
   @override
   String get home => 'الرئيسية';
@@ -187,4 +192,41 @@ class AppLocalizationsAr extends AppLocalizations {
   String new_value(Object field) {
     return 'أدخل $field الجديد';
   }
+
+  @override
+  String get camera => 'كاميرا';
+
+  @override
+  String get cameraOpened => 'الكاميرا مفتوحة';
+
+  @override
+  String get cameraClosed => 'الكاميرا مغلقة';
+
+  @override
+  String get cameraInitializing => 'جاري تشغيل الكاميرا...';
+
+  @override
+  String get cameraPermissionRequired => 'إذن الكاميرا مطلوب';
+
+  @override
+  String get cameraPermissionMessage =>
+      'هذا التطبيق يحتاج إذن الكاميرا لالتقاط الصور.';
+
+  @override
+  String get cameraError => 'خطأ';
+
+  @override
+  String get photoCapturedSuccessfully => 'تم التقاط الصورة بنجاح!';
+
+  @override
+  String get failedToCapturePhoto => 'فشل في التقاط الصورة';
+
+  @override
+  String get failedToInitializeCamera => 'فشل في تشغيل الكاميرا';
+
+  @override
+  String get retake => 'إعادة التقاط';
+
+  @override
+  String get settings => 'الإعدادات';
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/voice_handlers/voice_handler_language.dart';
 import '../../../main/presentation/voice/chat_compilation_loader.dart';
 import '../../../main/presentation/voice/voice_router.dart';
 import '../../../profile/presentation/screen/Profile_screen.dart';
+import '../../../auth/presentation/cubit/auth_cubit.dart';
+import '../../../login/presentation/phone_number_screen.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../widget/language_dialog.dart';
 
@@ -24,8 +27,17 @@ class _SettingScreenState extends State<SettingScreen> {
     voiceRouter = VoiceRouter(loader);
   }
 
-  void _logout() {
-    print('Logout');
+  Future<void> _logout() async {
+    try {
+      await context.read<AuthCubit>().logout();
+      // Navigate to login screen after logout
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => const PhoneNumberScreen()),
+        (route) => false,
+      );
+    } catch (e) {
+      print('Logout error: $e');
+    }
   }
 
   void handleVoiceIntent(Map<String, dynamic> intent) {
