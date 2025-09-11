@@ -20,6 +20,8 @@ import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
+import java.util.List;
+
 public class MainActivity extends FlutterFragmentActivity {
     private static final String CHANNEL = "nabd/foreground";
     private static final String VOICE_ID_CHANNEL = "nabd/voiceid";
@@ -102,6 +104,14 @@ public class MainActivity extends FlutterFragmentActivity {
                 case "isProfileEnrolled":
                     boolean enrolled = voiceIdService.isProfileEnrolled(this);
                     result.success(enrolled);
+                    break;
+                case "saveVoiceProfile":
+                    List<Integer> voiceProfileBytes = call.argument("voiceProfileBytes");
+                    if (voiceProfileBytes != null) {
+                        voiceIdService.saveVoiceProfile(this, voiceProfileBytes, result);
+                    } else {
+                        result.error("NO_VOICE_PROFILE", "No voice profile data provided", null);
+                    }
                     break;
                 default:
                     result.notImplemented();

@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:navia/core/services/feedback_service.dart';
-import 'package:shake/shake.dart';
 
 import '../../../../core/services/stt_service.dart';
 import '../../../../core/services/shake_detector_service.dart';

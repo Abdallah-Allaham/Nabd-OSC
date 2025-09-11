@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.io.IOException;
+import java.util.List;
 
 import ai.picovoice.eagle.Eagle;
 import ai.picovoice.eagle.EagleException;
@@ -192,6 +193,31 @@ public class VoiceIdService {
     public boolean isProfileEnrolled(Context context) {
         File profileFile = new File(context.getFilesDir(), PROFILE_FILE);
         return profileFile.exists();
+    }
+
+    public void saveVoiceProfile(Context context, List<Integer> voiceProfileBytes, MethodChannel.Result result) {
+        try {
+            // Convert List<Integer> to byte[]
+            byte[] bytes = new byte[voiceProfileBytes.size()];
+            for (int i = 0; i < voiceProfileBytes.size(); i++) {
+                bytes[i] = voiceProfileBytes.get(i).byteValue();
+            }
+            
+            // Create EagleProfile from bytes
+            EagleProfile profile = new EagleProfile(bytes);
+            
+            // Save to local file
+            saveProfile(context, profile);
+            
+            // Store in memory for immediate use
+            speakerProfile = profile;
+            
+            Log.d(TAG, "Voice profile saved successfully from login");
+            runOnUiThread(() -> result.success(true));
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to save voice profile: " + e.getMessage(), e);
+            runOnUiThread(() -> result.error("SAVE_ERROR", "Failed to save voice profile: " + e.getMessage(), null));
+        }
     }
 
     private void saveProfile(Context context, EagleProfile profile) throws IOException {

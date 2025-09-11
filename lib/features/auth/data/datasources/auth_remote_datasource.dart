@@ -11,7 +11,9 @@ abstract class AuthRemoteDataSource {
   Future<void> saveUserProfile(String uid, String phoneNumber, String name, String voiceProfileUrl);
   Future<String> storeUserVoiceProfile(String uid, List<int> voiceProfileBytes);
   Future<String?> getRemoteUserVoiceProfile(String uid);
+  Future<List<int>?> downloadUserVoiceProfile(String uid);
   Future<void> deleteRemoteVoiceProfile(String uid);
+  Future<UserModel> getUserData(String uid);
   Future<void> logout();
 }
 
@@ -115,9 +117,37 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<List<int>?> downloadUserVoiceProfile(String uid) async {
+    try {
+      final profileRef = storage.ref().child('users').child(uid).child('voice_profile.bin');
+      final data = await profileRef.getData();
+      return data?.toList();
+    } on FirebaseException catch (e) {
+      if (e.code == 'object-not-found') {
+        return null;
+      }
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> deleteRemoteVoiceProfile(String uid) async {
     final profileRef = storage.ref().child('users').child(uid).child('voice_profile.bin');
     await profileRef.delete();
+  }
+
+  @override
+  Future<UserModel> getUserData(String uid) async {
+    try {
+      final doc = await firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        return UserModel.fromFirestore(doc);
+      } else {
+        throw const ServerException('User not found');
+      }
+    } catch (e) {
+      throw ServerException('Failed to get user data: $e');
+    }
   }
 
   @override

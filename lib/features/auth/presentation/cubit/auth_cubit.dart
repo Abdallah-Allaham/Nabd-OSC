@@ -185,20 +185,39 @@ class AuthCubit extends Cubit<AuthState> {
       await FirebaseAuth.instance.signInWithCredential(credential);
       final currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null && _isLoginFlow == true) {
+        // Get user data from Firestore to get the actual name
+        final userEntity = await authRepository.getUserData(currentUser.uid);
+        
+        // Save user data to secure storage
         await secureStorageHelper.savePrefString(
           key: AppConstants.uidKey,
           value: currentUser.uid,
         );
-        final userEntity = UserEntity(
-          uid: currentUser.uid,
-          phoneNumber: currentUser.phoneNumber ?? '',
-          name: currentUser.displayName ?? 'N/A',
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.nameKey,
+          value: userEntity.name,
         );
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.phoneKey,
+          value: currentUser.phoneNumber ?? '',
+        );
+        
+        // Download and cache voice profile for wake word and voice ID service
+        await _downloadAndCacheVoiceProfile(currentUser.uid);
+        
         emit(AuthAuthenticatedForLogin(user: userEntity));
       } else if (currentUser != null && _isLoginFlow == false) {
         await secureStorageHelper.savePrefString(
           key: AppConstants.uidKey,
           value: currentUser.uid,
+        );
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.nameKey,
+          value: _userName ?? 'N/A',
+        );
+        await secureStorageHelper.savePrefString(
+          key: AppConstants.phoneKey,
+          value: currentUser.phoneNumber ?? '',
         );
         final userEntity = UserEntity(
           uid: currentUser.uid,
@@ -312,5 +331,55 @@ class AuthCubit extends Cubit<AuthState> {
   void stopSpeechToText() {
     sttService.stopListening();
     emit(AuthStoppedListeningForSpeech());
+  }
+
+  Future<void> logout() async {
+    try {
+      emit(AuthLoading());
+      await authRepository.logout();
+      emit(AuthUnauthenticated());
+    } catch (e) {
+      emit(AuthError(message: e.toString()));
+    }
+  }
+
+  // Download and cache voice profile for wake word and voice ID service
+  Future<void> _downloadAndCacheVoiceProfile(String uid) async {
+    try {
+      final voiceProfileBytes = await authRepository.getCachedVoiceProfileData();
+      if (voiceProfileBytes != null && voiceProfileBytes.isNotEmpty) {
+        // Save to native Java code for background service access
+        await _saveVoiceProfileToNative(voiceProfileBytes);
+        print('Voice profile loaded from cache and saved to native for user: $uid');
+      } else {
+        // Try to download from Firebase if not in cache
+        try {
+          final voiceProfileBytes = await authRepository.downloadUserVoiceProfile(uid);
+          if (voiceProfileBytes != null && voiceProfileBytes.isNotEmpty) {
+            await authRepository.cacheVoiceProfileData(voiceProfileBytes);
+            await _saveVoiceProfileToNative(voiceProfileBytes);
+            print('Voice profile downloaded and cached for user: $uid');
+          } else {
+            print('Voice profile not found for user: $uid');
+          }
+        } catch (e) {
+          print('Voice profile download failed for user: $uid - $e');
+        }
+      }
+    } catch (e) {
+      print('Voice profile cache access failed for user: $uid - $e');
+    }
+  }
+
+  // Save voice profile to native Java code for background service access
+  Future<void> _saveVoiceProfileToNative(List<int> voiceProfileBytes) async {
+    try {
+      const platform = MethodChannel('nabd/voiceid');
+      await platform.invokeMethod('saveVoiceProfile', {
+        'voiceProfileBytes': voiceProfileBytes,
+      });
+    } catch (e) {
+      print('Failed to save voice profile to native: $e');
+    }
   }
 }

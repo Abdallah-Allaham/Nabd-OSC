@@ -63,5 +63,19 @@
         "type": "Object"
       }
     }
-  }
+  },
+  "camera": "كاميرا",
+  "cameraOpened": "الكاميرا مفتوحة",
+  "cameraClosed": "الكاميرا مغلقة",
+  "cameraInitializing": "جاري تشغيل الكاميرا...",
+  "cameraPermissionRequired": "إذن الكاميرا مطلوب",
+  "cameraPermissionMessage": "هذا التطبيق يحتاج إذن الكاميرا لالتقاط الصور.",
+  "cameraError": "خطأ",
+  "photoCapturedSuccessfully": "تم التقاط الصورة بنجاح!",
+  "failedToCapturePhoto": "فشل في التقاط الصورة",
+  "failedToInitializeCamera": "فشل في تشغيل الكاميرا",
+  "retake": "إعادة التقاط",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "settings": "الإعدادات"
 }

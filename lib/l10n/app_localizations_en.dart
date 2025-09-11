@@ -21,7 +21,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get alert => 'Alert';
 
   @override
-  String get permissionsMessage => 'To continue working efficiently in the background, we need these permissions. Please grant us permissions to ignore battery optimizations, appear on top of other apps, and accessibility.';
+  String get permissionsMessage =>
+      'To continue working efficiently in the background, we need these permissions. Please grant us permissions to ignore battery optimizations, appear on top of other apps, and accessibility.';
 
   @override
   String get grantPermissions => 'Grant Permissions';
@@ -53,10 +54,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get otpVerificationTitle => 'OTP Verification';
 
   @override
-  String get otpMessage => 'We have sent a verification code to your phone number.';
+  String get otpMessage =>
+      'We have sent a verification code to your phone number.';
 
   @override
-  String get smsPermissionMessage => 'Please allow us to read messages to enable auto-fill.';
+  String get smsPermissionMessage =>
+      'Please allow us to read messages to enable auto-fill.';
 
   @override
   String codeEntered(Object otpCode) {
@@ -122,7 +125,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recordYourVoice => 'Record your voiceprint';
 
   @override
-  String get voiceEnrollmentMessage => 'Press the button below and speak for 7 seconds to record your voiceprint.';
+  String get voiceEnrollmentMessage =>
+      'Press the button below and speak for 7 seconds to record your voiceprint.';
 
   @override
   String get startRecording => 'Start Recording';
@@ -136,10 +140,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get loginPageSemantics => 'Login page, enter your phone number by speaking or typing.';
+  String get loginPageSemantics =>
+      'Login page, enter your phone number by speaking or typing.';
 
   @override
-  String get otpScreenSemantics => 'OTP verification screen, enter the verification code by speaking or typing.';
+  String get otpScreenSemantics =>
+      'OTP verification screen, enter the verification code by speaking or typing.';
 
   @override
   String get home => 'Home';
@@ -187,4 +193,41 @@ class AppLocalizationsEn extends AppLocalizations {
   String new_value(Object field) {
     return 'Enter new $field';
   }
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get cameraOpened => 'Camera is open';
+
+  @override
+  String get cameraClosed => 'Camera is closed';
+
+  @override
+  String get cameraInitializing => 'Initializing Camera...';
+
+  @override
+  String get cameraPermissionRequired => 'Camera Permission Required';
+
+  @override
+  String get cameraPermissionMessage =>
+      'This app needs camera permission to take photos.';
+
+  @override
+  String get cameraError => 'Error';
+
+  @override
+  String get photoCapturedSuccessfully => 'Photo captured successfully!';
+
+  @override
+  String get failedToCapturePhoto => 'Failed to capture photo';
+
+  @override
+  String get failedToInitializeCamera => 'Failed to initialize camera';
+
+  @override
+  String get retake => 'Retake';
+
+  @override
+  String get settings => 'Settings';
 }

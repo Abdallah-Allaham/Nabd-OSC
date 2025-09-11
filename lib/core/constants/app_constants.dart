@@ -8,7 +8,10 @@ class AppStrings {
 
 class AppConstants {
   static const String uidKey = 'uid';
+  static const String nameKey = 'name';
+  static const String phoneKey = 'phone';
   static const String voiceProfileDataKey = 'voiceProfileData';
+  static const String voiceProfileBytesKey = 'voiceProfileBytes';
 }
 
 
