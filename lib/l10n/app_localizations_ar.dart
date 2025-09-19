@@ -229,4 +229,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settings => 'الإعدادات';
+
+  @override
+  String get opening_wifi_settings => 'فتح إعدادات الواي فاي';
+
+  @override
+  String get capturing => 'جاري التقاط';
+
+  @override
+  String get code_ready => 'الكود جاهز';
+
+  @override
+  String get fallback_use_system_qr => 'استخدم رمز النظام';
+
+  @override
+  String get confirm_identity => 'تأكيد الهوية';
 }

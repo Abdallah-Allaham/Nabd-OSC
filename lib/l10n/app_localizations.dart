@@ -505,6 +505,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// No description provided for @opening_wifi_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Wi-Fi settings'**
+  String get opening_wifi_settings;
+
+  /// No description provided for @capturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing'**
+  String get capturing;
+
+  /// No description provided for @code_ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Code ready'**
+  String get code_ready;
+
+  /// No description provided for @fallback_use_system_qr.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system QR'**
+  String get fallback_use_system_qr;
+
+  /// No description provided for @confirm_identity.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm identity'**
+  String get confirm_identity;
 }
 
 class _AppLocalizationsDelegate

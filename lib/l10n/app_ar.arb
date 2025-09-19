@@ -77,5 +77,10 @@
   "retake": "إعادة التقاط",
   "save": "حفظ",
   "cancel": "إلغاء",
-  "settings": "الإعدادات"
+  "settings": "الإعدادات",
+  "opening_wifi_settings": "فتح إعدادات الواي فاي",
+  "capturing": "جاري التقاط",
+  "code_ready": "الكود جاهز",
+  "fallback_use_system_qr": "استخدم رمز النظام",
+  "confirm_identity": "تأكيد الهوية"
 }

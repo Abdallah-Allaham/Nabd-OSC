@@ -75,5 +75,10 @@
   "retake": "Retake",
   "save": "Save",
   "cancel": "Cancel",
-  "settings": "Settings"
+  "settings": "Settings",
+  "opening_wifi_settings": "Opening Wi-Fi settings",
+  "capturing": "Capturing",
+  "code_ready": "Code ready",
+  "fallback_use_system_qr": "Use system QR",
+  "confirm_identity": "Confirm identity"
 }

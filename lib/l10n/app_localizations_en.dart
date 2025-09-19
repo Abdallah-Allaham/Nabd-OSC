@@ -230,4 +230,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settings => 'Settings';
+
+  @override
+  String get opening_wifi_settings => 'Opening Wi-Fi settings';
+
+  @override
+  String get capturing => 'Capturing';
+
+  @override
+  String get code_ready => 'Code ready';
+
+  @override
+  String get fallback_use_system_qr => 'Use system QR';
+
+  @override
+  String get confirm_identity => 'Confirm identity';
 }

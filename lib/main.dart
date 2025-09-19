@@ -8,6 +8,7 @@ import '../../../../l10n/app_localizations.dart';
 import 'core/services/background_service_manager.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/main/presentation/cubit/navigation_cubit.dart';
+import 'features/connectivity/presentation/cubit/connectivity_cubit.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'firebase_options.dart';
 import 'injection_container.dart' as di;
@@ -48,6 +49,7 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider<AuthCubit>(create: (context) => di.sl<AuthCubit>()),
         BlocProvider<NavigationCubit>(create: (context) => di.sl<NavigationCubit>()),
+        BlocProvider<ConnectivityCubit>(create: (context) => di.sl<ConnectivityCubit>()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
