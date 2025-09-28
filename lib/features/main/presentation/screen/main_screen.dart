@@ -19,6 +19,7 @@ import '../cubit/navigation_cubit.dart';
 import '../cubit/navigation_state.dart';
 import '../voice/chat_compilation_loader.dart';
 import '../voice/voice_router.dart';
+import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -30,7 +31,7 @@ class _MainScreenState extends State<MainScreen> {
     HomeScreen(),
     PdfReaderScreen(),
     HistoryScreen(),
-    ConnectivityScreen(),
+    ConnectivityScreen(), // No need for BlocProvider wrapper since it's global
     SettingScreen(),
   ];
 

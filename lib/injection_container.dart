@@ -18,6 +18,7 @@ import 'features/auth/domain/usecases/verify_otp_usecase.dart';
 import 'features/auth/domain/usecases/upload_voice_profile_usecase.dart';
 import 'features/auth/presentation/cubit/auth_cubit.dart';
 import 'features/main/presentation/cubit/navigation_cubit.dart';
+import 'features/connectivity/presentation/cubit/connectivity_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -39,6 +40,7 @@ Future<void> init({required String accessKey}) async {
 
   //Nav Presentation
   sl.registerFactory(() => NavigationCubit());
+  sl.registerFactory(() => ConnectivityCubit());
 
 
   // Domain layer

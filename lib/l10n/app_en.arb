@@ -75,5 +75,20 @@
   "retake": "Retake",
   "save": "Save",
   "cancel": "Cancel",
-  "settings": "Settings"
+  "settings": "Settings",
+  "wifiQrTitle": "WiFi QR Code",
+  "networkName": "Network Name",
+  "password": "Password",
+  "userId": "User ID",
+  "qrInstructions": "Scan this QR code with another device to connect to the WiFi network",
+  "close": "Close",
+  "capturing": "Capturing QR code...",
+  "qrVisible": "QR code detected",
+  "wifiShare": "Share WiFi",
+  "generateQr": "Generate QR Code",
+  "opening_wifi_settings": "Opening Wi-Fi settings",
+  "capturing": "Capturing",
+  "code_ready": "Code ready",
+  "fallback_use_system_qr": "Use system QR",
+  "confirm_identity": "Confirm identity"
 }

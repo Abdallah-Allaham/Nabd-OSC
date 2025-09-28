@@ -505,6 +505,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings'**
   String get settings;
+
+  /// No description provided for @wifiQrTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'WiFi QR Code'**
+  String get wifiQrTitle;
+
+  /// No description provided for @networkName.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Name'**
+  String get networkName;
+
+  /// No description provided for @password.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// No description provided for @userId.
+  ///
+  /// In en, this message translates to:
+  /// **'User ID'**
+  String get userId;
+
+  /// No description provided for @qrInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan this QR code with another device to connect to the WiFi network'**
+  String get qrInstructions;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @capturing.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing'**
+  String get capturing;
+
+  /// No description provided for @qrVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code detected'**
+  String get qrVisible;
+
+  /// No description provided for @wifiShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share WiFi'**
+  String get wifiShare;
+
+  /// No description provided for @generateQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate QR Code'**
+  String get generateQr;
+
+  /// No description provided for @opening_wifi_settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Wi-Fi settings'**
+  String get opening_wifi_settings;
+
+  /// No description provided for @code_ready.
+  ///
+  /// In en, this message translates to:
+  /// **'Code ready'**
+  String get code_ready;
+
+  /// No description provided for @fallback_use_system_qr.
+  ///
+  /// In en, this message translates to:
+  /// **'Use system QR'**
+  String get fallback_use_system_qr;
+
+  /// No description provided for @confirm_identity.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm identity'**
+  String get confirm_identity;
 }
 
 class _AppLocalizationsDelegate

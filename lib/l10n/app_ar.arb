@@ -77,5 +77,20 @@
   "retake": "إعادة التقاط",
   "save": "حفظ",
   "cancel": "إلغاء",
-  "settings": "الإعدادات"
+  "settings": "الإعدادات",
+  "wifiQrTitle": "رمز QR للواي فاي",
+  "networkName": "اسم الشبكة",
+  "password": "كلمة المرور",
+  "userId": "معرف المستخدم",
+  "qrInstructions": "امسح هذا الرمز بجهاز آخر للاتصال بشبكة الواي فاي",
+  "close": "إغلاق",
+  "capturing": "جاري التقاط رمز QR...",
+  "qrVisible": "تم اكتشاف رمز QR",
+  "wifiShare": "مشاركة الواي فاي",
+  "generateQr": "إنشاء رمز QR",
+  "opening_wifi_settings": "فتح إعدادات الواي فاي",
+  "capturing": "جاري التقاط",
+  "code_ready": "الكود جاهز",
+  "fallback_use_system_qr": "استخدم رمز النظام",
+  "confirm_identity": "تأكيد الهوية"
 }
