@@ -232,10 +232,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settings => 'Settings';
 
   @override
-  String get opening_wifi_settings => 'Opening Wi-Fi settings';
+  String get wifiQrTitle => 'WiFi QR Code';
+
+  @override
+  String get networkName => 'Network Name';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get userId => 'User ID';
+
+  @override
+  String get qrInstructions =>
+      'Scan this QR code with another device to connect to the WiFi network';
+
+  @override
+  String get close => 'Close';
 
   @override
   String get capturing => 'Capturing';
+
+  @override
+  String get qrVisible => 'QR code detected';
+
+  @override
+  String get wifiShare => 'Share WiFi';
+
+  @override
+  String get generateQr => 'Generate QR Code';
+
+  @override
+  String get opening_wifi_settings => 'Opening Wi-Fi settings';
 
   @override
   String get code_ready => 'Code ready';

@@ -12,6 +12,11 @@ class ConnectivityCubit extends Cubit<ConnectivityState> {
   final FeedbackService _feedbackService = FeedbackService();
   final SecureStorageHelper _secureStorage = SecureStorageHelper();
   StreamSubscription<Map<String, dynamic>>? _eventSubscription;
+  
+  // Cache for current network data
+  String? _cachedSsid;
+  String? _cachedPassword;
+  String? _cachedUid;
 
   ConnectivityCubit() : super(ConnectivityIdle()) {
     _setupEventSubscription();
@@ -78,6 +83,37 @@ class ConnectivityCubit extends Cubit<ConnectivityState> {
     }
   }
 
+  Future<void> updateWithParsedData(String ssid, String password) async {
+    // Check if this is the same network as cached
+    if (_cachedSsid == ssid && _cachedPassword == password) {
+      // Same network, check if we already have a ready state
+      if (state is ConnectivityReady) {
+        final currentState = state as ConnectivityReady;
+        if (currentState.ssid == ssid && currentState.password == password) {
+          // Already showing the same QR code, no need to rebuild
+          return;
+        }
+      }
+    }
+
+    // Get UID from secure storage
+    final uid = await _secureStorage.getPrefString(
+      key: AppConstants.uidKey,
+      defaultValue: '',
+    );
+
+    // Cache the data
+    _cachedSsid = ssid;
+    _cachedPassword = password;
+    _cachedUid = uid.isNotEmpty ? uid : null;
+
+    emit(ConnectivityReady(
+      ssid: ssid,
+      password: password,
+      uid: _cachedUid,
+    ));
+  }
+
   void _handleCaptureBlocked() {
     if (state is ConnectivityCapturing) {
       emit(ConnectivityFallback());
@@ -87,6 +123,16 @@ class ConnectivityCubit extends Cubit<ConnectivityState> {
 
   void _handleFailure(String reason) {
     emit(ConnectivityError(reason: reason));
+  }
+
+  void handleFailure(String reason) {
+    emit(ConnectivityError(reason: reason));
+  }
+
+  void clearCache() {
+    _cachedSsid = null;
+    _cachedPassword = null;
+    _cachedUid = null;
   }
 
   String getFinalJson() {

@@ -231,10 +231,38 @@ class AppLocalizationsAr extends AppLocalizations {
   String get settings => 'الإعدادات';
 
   @override
-  String get opening_wifi_settings => 'فتح إعدادات الواي فاي';
+  String get wifiQrTitle => 'رمز QR للواي فاي';
+
+  @override
+  String get networkName => 'اسم الشبكة';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get userId => 'معرف المستخدم';
+
+  @override
+  String get qrInstructions =>
+      'امسح هذا الرمز بجهاز آخر للاتصال بشبكة الواي فاي';
+
+  @override
+  String get close => 'إغلاق';
 
   @override
   String get capturing => 'جاري التقاط';
+
+  @override
+  String get qrVisible => 'تم اكتشاف رمز QR';
+
+  @override
+  String get wifiShare => 'مشاركة الواي فاي';
+
+  @override
+  String get generateQr => 'إنشاء رمز QR';
+
+  @override
+  String get opening_wifi_settings => 'فتح إعدادات الواي فاي';
 
   @override
   String get code_ready => 'الكود جاهز';

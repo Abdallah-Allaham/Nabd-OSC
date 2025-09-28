@@ -19,6 +19,9 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import java.util.Arrays; // Import the Arrays class to use it
+import android.content.BroadcastReceiver;
+import android.content.IntentFilter;
+import android.content.Context;
 
 public class PorcupainService extends Service {
     private static final String TAG = "PorcupainService";
@@ -39,6 +42,11 @@ public class PorcupainService extends Service {
     private short[] audioBuffer;
     private int bufferIndex = 0;
     private boolean isRecording = false;
+    private volatile boolean suppressed = false;
+    
+    // Fix receiver leak
+    private boolean receiverRegistered = false;
+    private BroadcastReceiver porcupineReceiver;
 
     @Override
     public void onCreate() {
@@ -48,6 +56,29 @@ public class PorcupainService extends Service {
         createNotificationChannel();
 
         voiceIdService = new VoiceIdService(this);
+        
+        // Register receiver for suppression control
+        if (!receiverRegistered) {
+            porcupineReceiver = new BroadcastReceiver() {
+                @Override public void onReceive(Context c, Intent i) {
+                    if ("com.navia.navia.PORCUPINE_SUPPRESS".equals(i.getAction())) {
+                        boolean s = i.getBooleanExtra("suppress", false);
+                        if (s && !suppressed) {
+                            suppressed = true;
+                            stopListeningSafely(); // stop Porcupine without destroying the service
+                        } else if (!s && suppressed) {
+                            suppressed = false;
+                            startListeningSafely(); // restart Porcupine
+                        }
+                        Log.d(TAG, "suppressed=" + suppressed);
+                    }
+                }
+            };
+            IntentFilter f = new IntentFilter();
+            f.addAction("com.navia.navia.PORCUPINE_SUPPRESS");
+            registerReceiver(porcupineReceiver, f);
+            receiverRegistered = true;
+        }
 
         // قم بزيادة حجم المخزن المؤقت للاحتفاظ ببيانات صوتية كافية (على سبيل المثال، 4 ثوانٍ).
         // هذا يضمن وجود بيانات صوتية كافية للتحقق بعد اكتشاف الكلمة المفتاحية.
@@ -57,6 +88,17 @@ public class PorcupainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent == null) {
+            Log.w(TAG, "onStartCommand called with null intent");
+            return START_STICKY;
+        }
+        final String action = intent.getStringExtra("action"); // may be null, handle safely
+        
+        if (suppressed) {
+            Log.d(TAG, "Suppressed: skip starting listening");
+            return START_STICKY;
+        }
+        
         if (!isRunning) {
             apiKey = intent.getStringExtra("apiKey");
             if (apiKey == null || apiKey.isEmpty()) {
@@ -145,6 +187,11 @@ public class PorcupainService extends Service {
     }
 
     private void startListening() {
+        if (suppressed) {
+            Log.d(TAG, "Suppressed: skip starting listening");
+            return;
+        }
+        
         if (porcupineManager == null) {
             Log.e(TAG, "PorcupineManager is null. Cannot start listening.");
             stopSelf();
@@ -158,6 +205,24 @@ public class PorcupainService extends Service {
             Log.e(TAG, "Failed to start PorcupineManager: " + e.getMessage());
             stopSelf();
         }
+    }
+
+    private void stopListeningSafely() {
+        try {
+            if (porcupineManager != null) {
+                porcupineManager.stop();
+                Log.d(TAG, "PorcupineManager stopped safely");
+            }
+        } catch (Throwable ignored) {}
+    }
+
+    private void startListeningSafely() {
+        try {
+            if (!suppressed && porcupineManager != null) {
+                porcupineManager.start();
+                Log.d(TAG, "PorcupineManager started safely");
+            }
+        } catch (Throwable ignored) {}
     }
 
     private void verifyAndOpenApp(short[] audioBuffer, String apiKey) {
@@ -233,6 +298,15 @@ public class PorcupainService extends Service {
     public void onDestroy() {
         isRunning = false;
         isRecording = false;
+        
+        // Fix receiver leak
+        try {
+            if (receiverRegistered && porcupineReceiver != null) {
+                unregisterReceiver(porcupineReceiver);
+                receiverRegistered = false;
+            }
+        } catch (Throwable ignored) {}
+        
         if (audioRecord != null) {
             audioRecord.stop();
             audioRecord.release();
@@ -254,5 +328,16 @@ public class PorcupainService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void stopListening() {
+        if (porcupineManager != null) {
+            try {
+                porcupineManager.stop();
+                Log.d(TAG, "PorcupineManager stopped listening");
+            } catch (PorcupineException e) {
+                Log.e(TAG, "Failed to stop PorcupineManager: " + e.getMessage());
+            }
+        }
     }
 }
