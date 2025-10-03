@@ -272,4 +272,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get confirm_identity => 'تأكيد الهوية';
+
+  @override
+  String get operation_successful => 'تمت العملية بنجاح';
+
+  @override
+  String get wifi_settings_opened =>
+      'تم فتح إعدادات الواي فاي. سيقوم النظام بالانتقال تلقائياً إلى الشبكة المتصلة وعرض رمز QR.';
 }

@@ -51,11 +51,13 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 children: [
                   IconButton(
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) => CameraScreen()),
                       );
+                      // التأكد من إغلاق الكاميرا عند العودة
+                      print("📱 Returned from camera screen");
                     },
                     icon: Icon(
                       Icons.camera_alt_outlined,

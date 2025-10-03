@@ -19,14 +19,13 @@ import '../cubit/navigation_cubit.dart';
 import '../cubit/navigation_state.dart';
 import '../voice/chat_compilation_loader.dart';
 import '../voice/voice_router.dart';
-import '../../../connectivity/presentation/cubit/connectivity_cubit.dart';
 
 class MainScreen extends StatefulWidget {
   @override
   State<MainScreen> createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   final List<Widget> screens = [
     HomeScreen(),
     PdfReaderScreen(),
@@ -53,6 +52,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     // نبدأ مستشعر الهز بمجرد دخول الشاشة.
     _shakeDetectorService.start(
       onShake: (event) {
@@ -133,7 +133,39 @@ class _MainScreenState extends State<MainScreen> {
     _silenceTimer?.cancel();
     _shakeDetectorService.stop(); // إيقاف مستشعر الهز.
     _sttService.stopListening();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        // التطبيق عاد للمقدمة - نبدأ Shake Detection
+        if (!_shakeDetectorService.isActive) {
+          print("📱 App resumed - Starting shake detection");
+          _shakeDetectorService.start(
+            onShake: (event) {
+              _startListeningWithTimer();
+            },
+          );
+        } else {
+          print("📱 App resumed - Shake detection already active");
+        }
+        break;
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        // التطبيق ذهب للخلفية أو توقف - نوقف Shake Detection
+        print("📱 App paused/inactive - Stopping shake detection");
+        _shakeDetectorService.stop();
+        break;
+      case AppLifecycleState.hidden:
+        // التطبيق مخفي - نوقف Shake Detection
+        print("📱 App hidden - Stopping shake detection");
+        _shakeDetectorService.stop();
+        break;
+    }
   }
 
   void _handleVoiceCommand(String text) async {

@@ -589,6 +589,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirm identity'**
   String get confirm_identity;
+
+  /// No description provided for @operation_successful.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation Successful'**
+  String get operation_successful;
+
+  /// No description provided for @wifi_settings_opened.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code.'**
+  String get wifi_settings_opened;
 }
 
 class _AppLocalizationsDelegate

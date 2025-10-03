@@ -92,5 +92,7 @@
   "capturing": "جاري التقاط",
   "code_ready": "الكود جاهز",
   "fallback_use_system_qr": "استخدم رمز النظام",
-  "confirm_identity": "تأكيد الهوية"
+  "confirm_identity": "تأكيد الهوية",
+  "operation_successful": "تمت العملية بنجاح",
+  "wifi_settings_opened": "تم فتح إعدادات الواي فاي. سيقوم النظام بالانتقال تلقائياً إلى الشبكة المتصلة وعرض رمز QR."
 }

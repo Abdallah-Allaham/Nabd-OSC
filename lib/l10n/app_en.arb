@@ -90,5 +90,7 @@
   "capturing": "Capturing",
   "code_ready": "Code ready",
   "fallback_use_system_qr": "Use system QR",
-  "confirm_identity": "Confirm identity"
+  "confirm_identity": "Confirm identity",
+  "operation_successful": "Operation Successful",
+  "wifi_settings_opened": "Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code."
 }
