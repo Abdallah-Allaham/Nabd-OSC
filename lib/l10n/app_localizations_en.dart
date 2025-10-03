@@ -273,4 +273,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirm_identity => 'Confirm identity';
+
+  @override
+  String get operation_successful => 'Operation Successful';
+
+  @override
+  String get wifi_settings_opened =>
+      'Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code.';
 }

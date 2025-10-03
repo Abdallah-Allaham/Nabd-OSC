@@ -9,26 +9,11 @@ abstract class ConnectivityState extends Equatable {
 
 class ConnectivityIdle extends ConnectivityState {}
 
-class ConnectivityOpeningSettings extends ConnectivityState {}
 
-class ConnectivityCapturing extends ConnectivityState {}
 
-class ConnectivityReady extends ConnectivityState {
-  final String ssid;
-  final String password;
-  final String? uid;
 
-  const ConnectivityReady({
-    required this.ssid,
-    required this.password,
-    this.uid,
-  });
+class ConnectivitySuccess extends ConnectivityState {}
 
-  @override
-  List<Object?> get props => [ssid, password, uid];
-}
-
-class ConnectivityFallback extends ConnectivityState {}
 
 class ConnectivityError extends ConnectivityState {
   final String reason;
