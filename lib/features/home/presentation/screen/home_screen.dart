@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../l10n/app_localizations.dart';
-import 'camera_screen.dart';
+import '../../../guidance/presentation/screen/guidance_screen.dart';
 
 
 class HomeScreen extends StatelessWidget {
@@ -54,7 +54,7 @@ class HomeScreen extends StatelessWidget {
                     onPressed: () async {
                       await Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => CameraScreen()),
+                        MaterialPageRoute(builder: (_) => const GuidanceScreen()),
                       );
                       // التأكد من إغلاق الكاميرا عند العودة
                       print("📱 Returned from camera screen");

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../features/guidance/presentation/screen/guidance_screen.dart';
 
-import '../../features/home/presentation/screen/camera_screen.dart';
+
+
 
 class CameraVoiceHandler {
   static Future<bool> handle(
@@ -13,7 +15,7 @@ class CameraVoiceHandler {
     if (intent['id'] == 'home.open_camera' || intent['id'] == 'camera.open') {
       print("[🟠] CameraVoiceHandler: تحقق الشرط، سيتم فتح الكاميرا");
       await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const CameraScreen()),
+        MaterialPageRoute(builder: (_) => const GuidanceScreen()),
       );
       return true;
     }

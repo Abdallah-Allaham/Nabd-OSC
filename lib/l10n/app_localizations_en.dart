@@ -280,4 +280,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get wifi_settings_opened =>
       'Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code.';
+
+  @override
+  String get guidance_move_down_right => 'Move phone down-right';
+
+  @override
+  String get guidance_move_down_left => 'Move phone down-left';
+
+  @override
+  String get guidance_move_up_right => 'Move phone up-right';
+
+  @override
+  String get guidance_move_up_left => 'Move phone up-left';
+
+  @override
+  String get guidance_move_away => 'Move slightly away from the paper';
+
+  @override
+  String get guidance_perfect => 'Perfect framing';
+
+  @override
+  String get guidance_no_document => 'No document detected';
+
+  @override
+  String get guidance_unknown => 'Unknown guidance';
+
+  @override
+  String get guidance_raise_phone => 'Raise the phone slightly';
+
+  @override
+  String get guidance_away_and_raise =>
+      'Move slightly away and raise the phone slightly';
+
+  @override
+  String get guidance_connected => 'Connected';
+
+  @override
+  String get guidance_disconnected => 'Disconnected';
 }

@@ -601,6 +601,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code.'**
   String get wifi_settings_opened;
+
+  /// No description provided for @guidance_move_down_right.
+  ///
+  /// In en, this message translates to:
+  /// **'Move phone down-right'**
+  String get guidance_move_down_right;
+
+  /// No description provided for @guidance_move_down_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Move phone down-left'**
+  String get guidance_move_down_left;
+
+  /// No description provided for @guidance_move_up_right.
+  ///
+  /// In en, this message translates to:
+  /// **'Move phone up-right'**
+  String get guidance_move_up_right;
+
+  /// No description provided for @guidance_move_up_left.
+  ///
+  /// In en, this message translates to:
+  /// **'Move phone up-left'**
+  String get guidance_move_up_left;
+
+  /// No description provided for @guidance_move_away.
+  ///
+  /// In en, this message translates to:
+  /// **'Move slightly away from the paper'**
+  String get guidance_move_away;
+
+  /// No description provided for @guidance_perfect.
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect framing'**
+  String get guidance_perfect;
+
+  /// No description provided for @guidance_no_document.
+  ///
+  /// In en, this message translates to:
+  /// **'No document detected'**
+  String get guidance_no_document;
+
+  /// No description provided for @guidance_unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown guidance'**
+  String get guidance_unknown;
+
+  /// No description provided for @guidance_raise_phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Raise the phone slightly'**
+  String get guidance_raise_phone;
+
+  /// No description provided for @guidance_away_and_raise.
+  ///
+  /// In en, this message translates to:
+  /// **'Move slightly away and raise the phone slightly'**
+  String get guidance_away_and_raise;
+
+  /// No description provided for @guidance_connected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get guidance_connected;
+
+  /// No description provided for @guidance_disconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get guidance_disconnected;
 }
 
 class _AppLocalizationsDelegate
