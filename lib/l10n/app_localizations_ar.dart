@@ -279,4 +279,40 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get wifi_settings_opened =>
       'تم فتح إعدادات الواي فاي. سيقوم النظام بالانتقال تلقائياً إلى الشبكة المتصلة وعرض رمز QR.';
+
+  @override
+  String get guidance_move_down_right => 'حرّك الهاتف للأسفل واليمين';
+
+  @override
+  String get guidance_move_down_left => 'حرّك الهاتف للأسفل واليسار';
+
+  @override
+  String get guidance_move_up_right => 'حرّك الهاتف للأعلى واليمين';
+
+  @override
+  String get guidance_move_up_left => 'حرّك الهاتف للأعلى واليسار';
+
+  @override
+  String get guidance_move_away => 'ابتعد قليلًا عن الورقة';
+
+  @override
+  String get guidance_perfect => 'إطار مثالي';
+
+  @override
+  String get guidance_no_document => 'لم يتم العثور على مستند';
+
+  @override
+  String get guidance_unknown => 'توجيه غير معروف';
+
+  @override
+  String get guidance_raise_phone => 'ارفع الهاتف قليلًا';
+
+  @override
+  String get guidance_away_and_raise => 'ابتعد قليلًا وارفع الهاتف قليلًا';
+
+  @override
+  String get guidance_connected => 'متصل';
+
+  @override
+  String get guidance_disconnected => 'غير متصل';
 }

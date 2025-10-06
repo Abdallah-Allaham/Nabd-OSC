@@ -93,4 +93,17 @@
   "confirm_identity": "Confirm identity",
   "operation_successful": "Operation Successful",
   "wifi_settings_opened": "Wi-Fi settings have been opened. The system will automatically navigate to your connected network and show the QR code."
+  ,
+  "guidance_move_down_right": "Move phone down-right",
+  "guidance_move_down_left": "Move phone down-left",
+  "guidance_move_up_right": "Move phone up-right",
+  "guidance_move_up_left": "Move phone up-left",
+  "guidance_move_away": "Move slightly away from the paper",
+  "guidance_perfect": "Perfect framing",
+  "guidance_no_document": "No document detected",
+  "guidance_unknown": "Unknown guidance",
+  "guidance_raise_phone": "Raise the phone slightly",
+  "guidance_away_and_raise": "Move slightly away and raise the phone slightly",
+  "guidance_connected": "Connected",
+  "guidance_disconnected": "Disconnected"
 }
