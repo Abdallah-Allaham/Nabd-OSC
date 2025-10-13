@@ -6,6 +6,7 @@ import '../cubit/stream_ws_state.dart';
 import '../../data/guidance_service.dart';
 import '../../../../core/services/feedback_service.dart';
 import '../../../../l10n/app_localizations.dart';
+import 'dart:ui' show ImageFilter;
 
 class GuidanceScreen extends StatefulWidget {
   const GuidanceScreen({super.key});
@@ -109,7 +110,9 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
   @override
   void initState() {
     super.initState();
-    _service = GuidanceService(serverUrl: 'wss://7499c157e3ea.ngrok-free.app/ws/guidance');
+    _service = GuidanceService(
+      serverUrl: 'wss://7499c157e3ea.ngrok-free.app/ws/guidance',
+    );
   }
 
   @override
@@ -127,29 +130,35 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
       },
       child: Scaffold(
         body: SafeArea(
-          child: BlocBuilder<StreamWsCubit, StreamWsState>(
+          child: BlocConsumer<StreamWsCubit, StreamWsState>(
+            listener: (context, state) {
+              if (state is LoadingState) {
+                _feedback.announce(
+                  'تم الالتقاط، جاري المعالجة',
+                  context,
+                );
+              }
+            },
             builder: (context, state) {
               _maybeAnnounce(context, state.guidanceDirection);
               return Stack(
                 fit: StackFit.expand,
                 children: [
                   if (_service.cameraController != null)
-                    Positioned.fill(
-                      child: FittedBox(
-                        fit: BoxFit.cover,
-                        child: SizedBox
-                          (
-                          width: _service.cameraController!.value.previewSize?.height ?? 1,
-                          height: _service.cameraController!.value.previewSize?.width ?? 1,
-                          child: CameraPreview(_service.cameraController!),
-                        ),
+                    Center(
+                      child: AspectRatio(
+                        aspectRatio:
+                            1 / _service.cameraController!.value.aspectRatio,
+                        child: CameraPreview(_service.cameraController!),
                       ),
                     ),
                   Center(
                     child: Icon(
                       _iconForDirection(state.guidanceDirection),
                       size: 96,
-                      color: _colorForDirection(state.guidanceDirection).withOpacity(0.9),
+                      color: _colorForDirection(
+                        state.guidanceDirection,
+                      ).withOpacity(0.9),
                     ),
                   ),
                   Positioned(
@@ -161,7 +170,8 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
                           width: 10,
                           height: 10,
                           decoration: BoxDecoration(
-                            color: (state.connected) ? Colors.green : Colors.red,
+                            color:
+                                (state.connected) ? Colors.green : Colors.red,
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -169,8 +179,13 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
                         Text(
                           state.connected
                               ? AppLocalizations.of(context)!.guidance_connected
-                              : AppLocalizations.of(context)!.guidance_disconnected,
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              : AppLocalizations.of(
+                                context,
+                              )!.guidance_disconnected,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ],
                     ),
@@ -190,21 +205,33 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                             shadows: [
-                              Shadow(offset: Offset(1,1), blurRadius: 3, color: Colors.black87),
+                              Shadow(
+                                offset: Offset(1, 1),
+                                blurRadius: 3,
+                                color: Colors.black87,
+                              ),
                             ],
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           (state.guidanceDirection == 'paper_face_only')
-                              ? AppLocalizations.of(context)!.guidance_away_and_raise
-                              : AppLocalizations.of(context)!.guidance_raise_phone,
+                              ? AppLocalizations.of(
+                                context,
+                              )!.guidance_away_and_raise
+                              : AppLocalizations.of(
+                                context,
+                              )!.guidance_raise_phone,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.white.withOpacity(0.9),
                             shadows: const [
-                              Shadow(offset: Offset(1,1), blurRadius: 3, color: Colors.black87),
+                              Shadow(
+                                offset: Offset(1, 1),
+                                blurRadius: 3,
+                                color: Colors.black87,
+                              ),
                             ],
                           ),
                         ),
@@ -219,7 +246,64 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(8),
                         color: Colors.red.withOpacity(0.7),
-                        child: Text(state.message, style: const TextStyle(color: Colors.white)),
+                        child: Text(
+                          state.message,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  if (state is LoadingState)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        ignoring: false, // يمنع التفاعل أثناء التحميل
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            // طبقة Blur فوق المعاينة (الكاميرا والفلَاش يضلّوا شغّالين تحتها)
+                            BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+                              child: Container(
+                                color: Colors.black.withOpacity(0.35),
+                              ),
+                            ),
+                            // مؤشّر تحميل + نص واضح للكفيف
+                            Center(
+                              child: Semantics(
+                                liveRegion: true,
+                                label: 'جاري المعالجة، يرجى الانتظار',
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const CircularProgressIndicator(
+                                      strokeWidth: 4,
+                                      color: Colors.white,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    const Text(
+                                      'جاري المعالجة…',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    if (state.sessionId?.isNotEmpty ==
+                                        true) ...[
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Session: ${state.sessionId}',
+                                        style: const TextStyle(
+                                          color: Colors.white70,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                 ],
@@ -231,5 +315,3 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
     );
   }
 }
-
-

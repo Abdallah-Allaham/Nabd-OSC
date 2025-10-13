@@ -10,14 +10,39 @@ class StreamWsCubit extends Cubit<StreamWsState> {
   Future<void> start() async {
     emit(const ConnectingState());
     await _service.start(
-      onGuidance: ({required direction, required coverage, required confidence, required ready}) {
-        emit(StreamingState(
-          guidanceDirection: direction,
-          coverage: coverage,
-          confidence: confidence,
-          readyForCapture: ready,
-          connected: _service.isConnected,
-        ));
+      onGuidance: ({
+        required direction,
+        required coverage,
+        required confidence,
+        required ready,
+      }) {
+        final isPerfect = direction == 'perfect' || ready == true;
+
+        if (isPerfect) {
+          _service.pauseStreaming();
+          emit(
+            LoadingState(
+              sessionId: 'pending',
+              savedPath: null,
+              guidanceDirection: direction,
+              coverage: coverage,
+              confidence: confidence,
+              readyForCapture: true,
+              connected: _service.isConnected,
+            ),
+          );
+          return;
+        }
+
+        emit(
+          StreamingState(
+            guidanceDirection: direction,
+            coverage: coverage,
+            confidence: confidence,
+            readyForCapture: ready,
+            connected: _service.isConnected,
+          ),
+        );
       },
       onError: (err) {
         emit(FailureState(message: err, connected: _service.isConnected));
@@ -30,5 +55,3 @@ class StreamWsCubit extends Cubit<StreamWsState> {
     emit(const InitialState());
   }
 }
-
-

@@ -75,4 +75,22 @@ class FailureState extends StreamWsState {
   });
 }
 
+class LoadingState extends StreamWsState {
+  final String? savedPath;
+  const LoadingState({
+    required String sessionId,
+    this.savedPath,
+    super.targetFps,
+    super.guidanceDirection,
+    super.coverage,
+    super.confidence,
+    super.readyForCapture,
+    super.connected,
+  }) : super(
+    loading: true,
+    sessionId: sessionId,
+  );
+}
+
+
 
