@@ -1,0 +1,12 @@
+type: page_extension
+page: reader
+intents:
+  - id: read.open_current
+    action: read
+    target: reader
+    synonyms: ["اقرأ النص","ابدأ القراءة","اقرأ"]
+  - id: read.stop
+    action: stop
+    target: reader
+    synonyms: ["أوقف القراءة","توقف","توقف مؤقت"]
+unknown_reply: "اعد الكلام"

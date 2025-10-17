@@ -1,0 +1,8 @@
+type: page_extension
+page: home
+intents:
+  - id: home.open_camera
+    action: open_camera
+    target: camera
+    synonyms: [ "افتح الكاميرا","شغل الكاميرا","الكاميرا" ]
+unknown_reply: "اعد الكلام"

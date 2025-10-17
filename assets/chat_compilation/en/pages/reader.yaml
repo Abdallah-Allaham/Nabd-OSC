@@ -1,0 +1,12 @@
+type: page_extension
+page: reader
+intents:
+  - id: read.open_current
+    action: read
+    target: reader
+    synonyms: ["read the text","start reading","read"]
+  - id: read.stop
+    action: stop
+    target: reader
+    synonyms: ["stop reading","pause","halt"]
+unknown_reply: "try again"
