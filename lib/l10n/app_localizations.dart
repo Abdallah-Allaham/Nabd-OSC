@@ -101,19 +101,19 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Nabd'**
+  /// **'Noor'**
   String get appTitle;
 
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Nabd'**
+  /// **'Noor'**
   String get appName;
 
   /// No description provided for @welcomeMessage.
   ///
   /// In en, this message translates to:
-  /// **'Welcome to Nabd app'**
+  /// **'Welcome to Noor app'**
   String get welcomeMessage;
 
   /// No description provided for @alert.

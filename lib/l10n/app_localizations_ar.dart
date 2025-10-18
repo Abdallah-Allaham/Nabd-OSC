@@ -9,13 +9,13 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
-  String get appTitle => 'نبض';
+  String get appTitle => 'نور';
 
   @override
-  String get appName => 'Nabd';
+  String get appName => 'Noor';
 
   @override
-  String get welcomeMessage => 'مرحباً بك في تطبيق نبض';
+  String get welcomeMessage => 'مرحباً بك في تطبيق نور';
 
   @override
   String get alert => 'تنبيه';

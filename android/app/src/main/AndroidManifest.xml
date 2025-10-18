@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
     <application
-        android:label="navia"
+        android:label="Noor"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

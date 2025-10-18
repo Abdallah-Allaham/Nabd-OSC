@@ -299,7 +299,7 @@ public class MainActivity extends FlutterFragmentActivity {
     private void requestAccessibilityPermission() {
         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
         startActivity(intent);
-        Toast.makeText(this, "يرجى البحث عن 'Navia' وتفعيل خدمة إمكانية الوصول.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "يرجى البحث عن 'Noor' وتفعيل خدمة إمكانية الوصول.", Toast.LENGTH_LONG).show();
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {

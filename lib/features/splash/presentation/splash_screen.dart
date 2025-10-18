@@ -182,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Align(
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/images/logo_nabd.png',
+                        'assets/images/logo_light.png',
                         width: 220,
                         height: 220,
                       ),

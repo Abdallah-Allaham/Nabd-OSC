@@ -121,13 +121,13 @@ public class PorcupainService extends Service {
             try {
                 porcupineManager = new PorcupineManager.Builder()
                         .setAccessKey(apiKey)
-                        .setKeywordPath("nabd.ppn")
+                        .setKeywordPath("noor.ppn")
                         .setSensitivity(0.7f)
                         .build(this, new PorcupineManagerCallback() {
                             @Override
                             public void invoke(int keywordIndex) {
                                 if (keywordIndex == 0) {
-                                    Log.d(TAG, "Keyword 'نبض' detected!");
+                                    Log.d(TAG, "Keyword 'noor' detected!");
                                     // الخطوة الحاسمة: قم بنسخ المخزن المؤقت الصوتي الحالي قبل التحقق.
                                     // هذا يضمن أن البيانات لا تتغير أثناء عملية التحقق.
                                     short[] snapshotBuffer;

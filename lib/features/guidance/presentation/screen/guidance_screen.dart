@@ -111,7 +111,7 @@ class _GuidanceScreenState extends State<GuidanceScreen> {
   void initState() {
     super.initState();
     _service = GuidanceService(
-      serverUrl: 'wss://7499c157e3ea.ngrok-free.app/ws/guidance',
+      serverUrl: 'wss://fd3cbac4d085.ngrok-free.app/ws/guidance',
     );
   }
 
