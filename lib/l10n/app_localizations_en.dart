@@ -12,7 +12,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'Noor';
 
   @override
-  String get appName => 'Noor';
+  String get appName => 'Making Noor A Reality';
 
   @override
   String get welcomeMessage => 'Welcome to Noor app';

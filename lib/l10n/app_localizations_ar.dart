@@ -12,7 +12,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get appTitle => 'نور';
 
   @override
-  String get appName => 'Noor';
+  String get appName => 'Making Noor A Reality';
 
   @override
   String get welcomeMessage => 'مرحباً بك في تطبيق نور';

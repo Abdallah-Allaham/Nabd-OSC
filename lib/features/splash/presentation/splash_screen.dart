@@ -182,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
                     child: Align(
                       alignment: Alignment.center,
                       child: Image.asset(
-                        'assets/images/logo_light.png',
+                        'assets/images/logo_dark.png',
                         width: 220,
                         height: 220,
                       ),
@@ -202,8 +202,8 @@ class _SplashScreenState extends State<SplashScreen>
                               style: Theme.of(
                                 context,
                               ).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w900,
-                                fontSize: 40,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20,
                                 shadows: [
                                   const Shadow(
                                     color: Colors.white54,

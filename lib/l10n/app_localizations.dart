@@ -107,7 +107,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Noor'**
+  /// **'Making Noor A Reality'**
   String get appName;
 
   /// No description provided for @welcomeMessage.
