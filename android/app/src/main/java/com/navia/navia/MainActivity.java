@@ -17,13 +17,13 @@ import android.os.Handler;
 
 import androidx.annotation.NonNull;
 
-
 import io.flutter.embedding.android.FlutterFragmentActivity;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugins.GeneratedPluginRegistrant;
 
 import java.util.List;
+
 import android.app.Activity;
 
 public class MainActivity extends FlutterFragmentActivity {
@@ -32,11 +32,10 @@ public class MainActivity extends FlutterFragmentActivity {
     private static final String CONNECTIVITY_CHANNEL = "nabd/connectivity";
     private VoiceIdService voiceIdService;
 
-    // إضافة هذا السطر: تعريف ToneGenerator كمتغير عام للكلاس
+    // تعريف ToneGenerator كمتغير عام للكلاس
     private ToneGenerator toneGen;
 
     private Handler mainHandler;
-
 
     // Connectivity channel field
     private MethodChannel connectivityChannel;
@@ -50,9 +49,8 @@ public class MainActivity extends FlutterFragmentActivity {
 
         voiceIdService = new VoiceIdService(this);
 
-        // إضافة هذا السطر: تهيئة ToneGenerator مرة واحدة
+        // تهيئة ToneGenerator مرة واحدة
         toneGen = new ToneGenerator(AudioManager.STREAM_SYSTEM, 100);
-
 
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), CHANNEL).setMethodCallHandler((call, result) -> {
             switch (call.method) {
@@ -131,6 +129,7 @@ public class MainActivity extends FlutterFragmentActivity {
             }
         });
 
+        // قناة الأصوات (feedback)
         new MethodChannel(flutterEngine.getDartExecutor().getBinaryMessenger(), "navia/feedback").setMethodCallHandler((call, result) -> {
             switch (call.method) {
                 case "playSuccessTone":
@@ -160,13 +159,19 @@ public class MainActivity extends FlutterFragmentActivity {
         connectivityChannel.setMethodCallHandler((call, result) -> {
             switch (call.method) {
                 case "open_wifi_settings":
-                    if (settingsLaunchedThisSession) { result.success(null); break; }
+                    if (settingsLaunchedThisSession) {
+                        result.success(null);
+                        break;
+                    }
                     settingsLaunchedThisSession = true;
                     openWifiSettings();
                     result.success(null);
                     break;
                 case "a11y_start":
-                    if (a11yStartedThisSession) { result.success(null); break; }
+                    if (a11yStartedThisSession) {
+                        result.success(null);
+                        break;
+                    }
                     a11yStartedThisSession = true;
                     AutoOpenAccessibilityService.startConnectivitySession();
                     result.success(null);
@@ -184,15 +189,12 @@ public class MainActivity extends FlutterFragmentActivity {
                     connectivityFlowActive = true;
                     settingsLaunchedThisSession = false;
                     a11yStartedThisSession = false;
-                    // (optional) tell PorcupainService to suppress
                     sendBroadcast(new Intent("com.navia.navia.PORCUPINE_SUPPRESS").putExtra("suppress", true));
                     result.success(null);
                     break;
                 case "connectivity_flow_end":
                     connectivityFlowActive = false;
-                    // (optional) remove suppression
                     sendBroadcast(new Intent("com.navia.navia.PORCUPINE_SUPPRESS").putExtra("suppress", false));
-                    // reset flags
                     settingsLaunchedThisSession = false;
                     a11yStartedThisSession = false;
                     result.success(null);
@@ -213,7 +215,6 @@ public class MainActivity extends FlutterFragmentActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
 
-            // Keep Settings on top, push our task to background.
             mainHandler.postDelayed(() -> {
                 try {
                     Activity activity = this;
@@ -227,8 +228,6 @@ public class MainActivity extends FlutterFragmentActivity {
         }
     }
 
-
-
     // Session management flags to prevent duplicate actions
     private volatile boolean settingsLaunchedThisSession = false;
     private volatile boolean a11yStartedThisSession = false;
@@ -236,16 +235,14 @@ public class MainActivity extends FlutterFragmentActivity {
     // Global connectivity flow management
     private volatile boolean connectivityFlowActive = false;
 
-
-
     private void bringAppToFront() {
         try {
             Intent i = getPackageManager().getLaunchIntentForPackage(getPackageName());
             if (i != null) {
                 i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT |
-                           Intent.FLAG_ACTIVITY_SINGLE_TOP |
-                           Intent.FLAG_ACTIVITY_CLEAR_TOP |
-                           Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                        Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
             }
         } catch (Throwable t) {
@@ -253,7 +250,7 @@ public class MainActivity extends FlutterFragmentActivity {
         }
     }
 
-    // إضافة هذه الدالة لتحرير الموارد عند إغلاق التطبيق
+    // Releasing ToneGenerator resources when the app is destroyed
     @Override
     protected void onDestroy() {
         if (toneGen != null) {
@@ -262,7 +259,7 @@ public class MainActivity extends FlutterFragmentActivity {
         super.onDestroy();
     }
 
-    // إضافة دوال التحقق من الأذونات المفقودة
+    // Permission check methods
     private boolean isIgnoringBatteryOptimizations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return getSystemService(PowerManager.class).isIgnoringBatteryOptimizations(getPackageName());
@@ -283,7 +280,7 @@ public class MainActivity extends FlutterFragmentActivity {
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
         } else {
-            Toast.makeText(this, "هذا الإذن متاح فقط على Android 6.0 وأحدث.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "This permission is only available on Android 6.0 and later.", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -299,7 +296,7 @@ public class MainActivity extends FlutterFragmentActivity {
     private void requestAccessibilityPermission() {
         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
         startActivity(intent);
-        Toast.makeText(this, "يرجى البحث عن 'Navia' وتفعيل خدمة إمكانية الوصول.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Please search for 'Navia' and enable the Accessibility Service.", Toast.LENGTH_LONG).show();
     }
 
     private boolean isAccessibilityServiceEnabled(Context context, Class<?> accessibilityService) {

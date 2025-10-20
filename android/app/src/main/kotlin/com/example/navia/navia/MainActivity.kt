@@ -1,6 +1,5 @@
-package com.navia.navia
+package com.example.file_pick_demo
 
-import android.media.MediaPlayer
 import android.net.Uri
 import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
@@ -9,25 +8,8 @@ import io.flutter.plugin.common.MethodChannel
 import java.io.File
 
 class MainActivity : FlutterActivity() {
-    private val FEEDBACK_CHANNEL = "navia/feedback"
-    private var mediaPlayer: MediaPlayer? = null
-
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-
-        // ----- قناة الأصوات (feedback) -----
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, FEEDBACK_CHANNEL)
-            .setMethodCallHandler { call, result ->
-                when (call.method) {
-                    "playSuccessTone" -> playTone(R.raw.success_tone)
-                    "playFailureTone" -> playTone(R.raw.failure_tone)
-                    "playLoadingTone" -> playTone(R.raw.loading_tone)
-                    // يمكنك إضافة المزيد هنا إذا أضفت أصوات ثانية
-                    else -> result.notImplemented()
-                }
-            }
-
-        // ----- قناة الملفات (saf_meta) -----
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "saf_meta")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -62,12 +44,5 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
-    }
-
-    // دالة تشغيل الصوت من ملفات raw
-    private fun playTone(resId: Int) {
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer.create(this, resId)
-        mediaPlayer?.start()
     }
 }
